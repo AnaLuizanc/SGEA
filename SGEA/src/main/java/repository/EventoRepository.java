@@ -22,4 +22,11 @@ public class EventoRepository extends BaseRepository<Evento, String> {
                 .filter(e -> e.getDataInicio().isAfter(hoje))
                 .collect(Collectors.toList());
     }
+    
+    public List<Evento> findAllByOrganizadorId(String organizadorId) {
+    if (organizadorId == null) return List.of();
+    return entities.values().stream()
+            .filter(e -> e.getOrganizadorResponsavel().getId().equals(organizadorId))
+            .collect(Collectors.toList());
+}
 }
