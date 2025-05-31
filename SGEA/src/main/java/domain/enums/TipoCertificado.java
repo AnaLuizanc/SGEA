@@ -8,6 +8,9 @@ package domain.enums;
  *
  * @author enio1
  */
-public class TipoCertificado {
-    
+public enum TipoCertificado {
+    PARTICIPACAO,
+    APRESENTACAO_TRABALHO,
+    ORGANIZACAO,
+    AVALIADOR 
 }

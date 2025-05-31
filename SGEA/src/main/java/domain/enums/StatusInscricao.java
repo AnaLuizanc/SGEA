@@ -8,6 +8,7 @@ package domain.enums;
  *
  * @author enio1
  */
-public class StatusInscricao {
-    
+public enum StatusInscricao {
+    ATIVA,
+    CANCELADA
 }

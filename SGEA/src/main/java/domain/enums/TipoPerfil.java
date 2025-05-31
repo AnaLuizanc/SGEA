@@ -8,6 +8,10 @@ package domain.enums;
  *
  * @author enio1
  */
-public class TipoPerfil {
-    
+public enum TipoPerfil {
+    ALUNO,
+    PROFESSOR,
+    COMUNIDADE,
+    ORGANIZADOR,
+    AVALIADOR
 }
