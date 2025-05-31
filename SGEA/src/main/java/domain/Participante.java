@@ -9,11 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import repository.Identifiable;
 /**
  *
  * @author enio1
  */
-public class Participante {
+public class Participante  implements Identifiable<String> {
     private String id;
     private String nomeCompleto;
     private String email;
@@ -34,6 +35,7 @@ public class Participante {
     }
 
     // Getters
+    @Override
     public String getId() {
         return id;
     }

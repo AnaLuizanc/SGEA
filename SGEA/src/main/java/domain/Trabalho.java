@@ -11,13 +11,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import repository.Identifiable;
 
 
 /**
  *
  * @author enio1
  */
-public class Trabalho {
+public class Trabalho  implements Identifiable<String>{
      private String id;
     private String titulo;
     private String arquivo; // Conteúdo ou caminho do arquivo
@@ -43,6 +44,7 @@ public class Trabalho {
     }
 
     // Getters
+    @Override
     public String getId() { return id; }
     public String getTitulo() { return titulo; }
     public String getArquivo() { return arquivo; }

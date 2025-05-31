@@ -9,11 +9,12 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.UUID;
+import repository.Identifiable;
 /**
  *
  * @author enio1
  */
-public class Inscricao {
+public class Inscricao implements Identifiable<String> {
     private String id;
     private LocalDate dataInscricao;
     private StatusInscricao status;
@@ -35,6 +36,7 @@ public class Inscricao {
     }
 
     // Getters
+    @Override
     public String getId() { return id; }
     public LocalDate getDataInscricao() { return dataInscricao; }
     public StatusInscricao getStatus() { return status; }
@@ -89,4 +91,6 @@ public class Inscricao {
     public int hashCode() {
         return Objects.hash(id);
     }
+    
+    
 }

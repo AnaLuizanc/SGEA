@@ -12,12 +12,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import repository.Identifiable;
 
 /**
  *
  * @author enio1
  */
-public class Evento {
+public class Evento implements Identifiable<String> {
    private String id;
     private String nome;
     private String descricao;
@@ -47,6 +48,7 @@ public class Evento {
     }
 
     // Getters
+    @Override
     public String getId() { return id; }
     public String getNome() { return nome; }
     public String getDescricao() { return descricao; }

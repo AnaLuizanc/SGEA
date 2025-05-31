@@ -8,11 +8,12 @@ import domain.enums.TipoCertificado;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
+import repository.Identifiable;
 /**
  *
  * @author enio1
  */
-public class Certificado {
+public class Certificado implements Identifiable<String>{
        private String id;
     private String codigoValidacao;
     private LocalDate dataEmissao;
@@ -49,6 +50,7 @@ public class Certificado {
 
 
     // Getters
+    @Override
     public String getId() { return id; }
     public String getCodigoValidacao() { return codigoValidacao; }
     public LocalDate getDataEmissao() { return dataEmissao; }

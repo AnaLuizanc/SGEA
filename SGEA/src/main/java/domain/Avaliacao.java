@@ -7,11 +7,12 @@ package domain;
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
+import repository.Identifiable;
 /**
  *
  * @author enio1
  */
-public class Avaliacao {
+public class Avaliacao implements Identifiable<String> {
      private String id;
     private double nota; // Pode ser um conceito ou nota numérica
     private String comentarios; // Parecer
@@ -30,6 +31,7 @@ public class Avaliacao {
     }
 
     // Getters
+    @Override
     public String getId() { return id; }
     public double getNota() { return nota; }
     public String getComentarios() { return comentarios; }
