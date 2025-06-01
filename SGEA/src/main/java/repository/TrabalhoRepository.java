@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package repository;
 
 import domain.Trabalho;
@@ -26,7 +22,7 @@ public class TrabalhoRepository extends BaseRepository<Trabalho, String> {
     public List<Trabalho> findAllByAutorId(String autorId) {
         if (autorId == null) return List.of();
         return entities.values().stream()
-                .filter(t -> t.getAutores().stream().anyMatch(autor -> autor.getId().equals(autorId)))
+                .filter(t -> t.getAutor().getId().equals(autorId))
                 .collect(Collectors.toList());
     }
 

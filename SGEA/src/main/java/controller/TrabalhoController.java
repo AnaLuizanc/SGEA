@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package controller;
 
 import domain.Evento;
@@ -11,7 +7,6 @@ import domain.enums.StatusTrabalho;
 import domain.enums.TipoPerfil;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 import repository.EventoRepository;
 import repository.InscricaoRepository;
 import repository.ParticipanteRepository;
@@ -35,33 +30,29 @@ public class TrabalhoController {
         this.inscricaoRepository = inscricaoRepository;
     }
 
-    public Trabalho submeterTrabalho(List<String> autoresIds, String eventoId, String titulo, String arquivo) {
+    public Trabalho submeterTrabalho(String idAutor, String eventoId, String titulo, String arquivo) {
         Evento evento = eventoRepository.findById(eventoId)
                 .orElseThrow(() -> new IllegalArgumentException("Evento com ID " + eventoId + " não encontrado."));
 
-        // RN 2: Submissão de trabalhos só é permitida dentro do período de submissão
+        // Regra de Negócio 2: Submissão de trabalhos só é permitida dentro do período de submissão
         if (!evento.isPeriodoSubmissaoAberto(LocalDate.now())) {
             throw new IllegalStateException("Período de submissão para o evento '" + evento.getNome() + "' está fechado.");
         }
 
-        if (autoresIds == null || autoresIds.isEmpty()) {
+        if (idAutor== null) {
             throw new IllegalArgumentException("Trabalho deve ter pelo menos um autor.");
         }
 
-        List<Participante> autores = autoresIds.stream()
-                .map(id -> participanteRepository.findById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("Autor com ID " + id + " não encontrado.")))
-                .collect(Collectors.toList());
+        Participante autor = participanteRepository.findById(idAutor)
+                        .orElseThrow(() -> new IllegalArgumentException("Autor com ID " + idAutor + " não encontrado."));
 
-        // RN 3: Um participante só pode submeter um trabalho a um evento se estiver inscrito nele.
-        // Verifica se pelo menos um dos autores está inscrito ativamente.
-        boolean algumAutorInscrito = autores.stream()
-                .anyMatch(autor -> evento.isParticipanteInscritoAtivo(autor));
-        if (!algumAutorInscrito) {
-            throw new IllegalStateException("Pelo menos um dos autores deve estar inscrito ativamente no evento para submeter um trabalho.");
+        // Regra de Negócio 3: Um participante só pode submeter um trabalho a um evento se estiver inscrito nele.
+        boolean autorInscrito = evento.isParticipanteInscritoAtivo(autor);
+        if (!autorInscrito) {
+            throw new IllegalStateException("O autor deve estar inscrito ativamente no evento para submeter um trabalho.");
         }
 
-        Trabalho novoTrabalho = new Trabalho(titulo, arquivo, evento, autores);
+        Trabalho novoTrabalho = new Trabalho(titulo, arquivo, evento, autor);
         evento.adicionarTrabalhoInterno(novoTrabalho);
         // eventoRepository.save(evento); // Se necessário
 

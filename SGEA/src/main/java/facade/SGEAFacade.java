@@ -86,7 +86,6 @@ public class SGEAFacade {
         return participanteController.atualizarParticipante(id, nome, email, instituicao, perfil);
     }
 
-    // UC2: O participante visualiza a lista de eventos disponíveis e se inscreve em um evento de seu interesse;
     public List<Evento> listarEventosDisponiveisParaInscricao() {
         return eventoController.listarEventosDisponiveisParaInscricao(LocalDate.now());
     }
@@ -109,8 +108,8 @@ public class SGEAFacade {
     }
 
     // UC3: O participante submete um trabalho para um evento no qual está inscrito;
-    public Trabalho submeterTrabalho(List<String> autoresIds, String eventoId, String titulo, String arquivo) {
-        return trabalhoController.submeterTrabalho(autoresIds, eventoId, titulo, arquivo);
+    public Trabalho submeterTrabalho(String idAutor, String eventoId, String titulo, String arquivo) {
+        return trabalhoController.submeterTrabalho(idAutor, eventoId, titulo, arquivo);
     }
 
     public List<Trabalho> listarTrabalhosPorEvento(String eventoId) {

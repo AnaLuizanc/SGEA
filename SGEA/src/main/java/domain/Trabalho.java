@@ -26,12 +26,12 @@ public class Trabalho  implements Identifiable<String>{
     private LocalDate dataSubmissao;
 
     private Evento evento; // Evento ao qual o trabalho foi submetido
-    private List<Participante> autores; // Lista de participantes autores
+    private Participante autor; // Lista de participantes autores
     private List<Avaliacao> avaliacoes; // Lista de avaliações recebidas
 
-    public Trabalho(String titulo, String arquivo, Evento evento, List<Participante> autores) {
-        if (autores == null || autores.isEmpty()) {
-            throw new IllegalArgumentException("Trabalho deve ter pelo menos um autor.");
+    public Trabalho(String titulo, String arquivo, Evento evento, Participante autor) {
+        if (autor == null) {
+            throw new IllegalArgumentException("Trabalho deve ter  autor.");
         }
         this.id = UUID.randomUUID().toString();
         this.titulo = titulo;
@@ -39,7 +39,7 @@ public class Trabalho  implements Identifiable<String>{
         this.status = StatusTrabalho.SUBMETIDO; // Status inicial
         this.dataSubmissao = LocalDate.now();
         this.evento = evento;
-        this.autores = new ArrayList<>(autores); // Copia a lista para evitar modificações externas
+        this.autor = autor;
         this.avaliacoes = new ArrayList<>();
     }
 
@@ -51,7 +51,7 @@ public class Trabalho  implements Identifiable<String>{
     public StatusTrabalho getStatus() { return status; }
     public LocalDate getDataSubmissao() { return dataSubmissao; }
     public Evento getEvento() { return evento; }
-    public List<Participante> getAutores() { return Collections.unmodifiableList(autores); }
+    public Participante getAutor() { return autor; }
     public List<Avaliacao> getAvaliacoes() { return Collections.unmodifiableList(avaliacoes); }
 
     // Setters
@@ -90,16 +90,12 @@ public class Trabalho  implements Identifiable<String>{
 
     @Override
     public String toString() {
-        String nomesAutores = autores.stream()
-                                     .map(Participante::getNomeCompleto)
-                                     .reduce((a, b) -> a + ", " + b)
-                                     .orElse("Nenhum autor");
         return "Trabalho ID: " + id +
                ", Título: '" + titulo + '\'' +
                ", Status: " + status +
                ", Data Submissão: " + dataSubmissao +
                ", Evento: '" + evento.getNome() + '\'' +
-               ", Autores: [" + nomesAutores + "]";
+               ", Autor: " + autor + "\n";
     }
 
     @Override

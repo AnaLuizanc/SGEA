@@ -27,7 +27,12 @@ public class ParticipanteController {
         if (email == null || !email.contains("@")) { // Validação simples de email
             throw new IllegalArgumentException("Email inválido.");
         }
-        // Poderia verificar se o email já existe, se fosse um requisito.
+        boolean emailJaExiste = participanteRepository.findAll().stream() 
+                                            .anyMatch(p -> p.getEmail().equalsIgnoreCase(email));
+        
+        if (emailJaExiste) {
+            throw new IllegalArgumentException("Já existe um participante cadastrado com este email.");
+        }
 
         Participante novoParticipante = new Participante(nomeCompleto, email, instituicao, tipoPerfil);
         return participanteRepository.save(novoParticipante);

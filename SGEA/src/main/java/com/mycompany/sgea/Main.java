@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- */
-
 package com.mycompany.sgea;
 
 import domain.Avaliacao;
@@ -22,21 +18,20 @@ import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-
 /**
  *
  * @author enio1
  */
-public class SGEA {
-    
+public class Main {
+
     private static final SGEAFacade facade = new SGEAFacade();
     private static final Scanner scanner = new Scanner(System.in);
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE; // yyyy-MM-dd
 
     private static Participante participanteLogado = null;
-    
+
     public static void main(String[] args) {
-         seedInitialData(); // Para facilitar testes
+        seedInitialData(); // Para facilitar testes
 
         int choice;
         do {
@@ -50,17 +45,17 @@ public class SGEA {
             }
         } while (choice != 0);
 
-        System.out.println("Encerrando SGEA. Até logo!");
+        System.out.println("FIM!");
         scanner.close();
     }
-    
-     private static void exibirMenuPrincipal() {
+
+    private static void exibirMenuPrincipal() {
         System.out.println("\n===== SGEA - Sistema de Gerenciamento de Eventos Acadêmicos =====");
         if (participanteLogado == null) {
             System.out.println("1. Login");
-            System.out.println("2. Cadastrar Novo Participante (UC1)");
-            System.out.println("3. Visualizar Eventos Disponíveis (Público)");
-            System.out.println("4. Validar Certificado (Público)");
+            System.out.println("2. Cadastrar Novo Participante");
+            System.out.println("3. Visualizar Eventos Disponíveis");
+            System.out.println("4. Validar Certificado");
             System.out.println("0. Sair");
         } else {
             System.out.println("Logado como: " + participanteLogado.getNomeCompleto() + " (" + participanteLogado.getTipoPerfil() + ")");
@@ -75,85 +70,126 @@ public class SGEA {
 
             if (participanteLogado.getTipoPerfil() == TipoPerfil.ORGANIZADOR) {
                 System.out.println("-- Menu Organizador --");
-                System.out.println("10. Cadastrar Novo Evento (UC4)");
-                System.out.println("11. Gerenciar Meus Eventos (UC5, FR7)");
-                System.out.println("12. Designar Avaliador para Trabalho (UC6)");
-                System.out.println("13. Atualizar Status de Trabalho");
-                System.out.println("14. Emitir Certificados do Evento (UC8)");
+                System.out.println("8. Cadastrar Novo Evento (UC4)");
+                System.out.println("9. Gerenciar Meus Eventos (UC5, FR7)");
+                System.out.println("10. Designar Avaliador para Trabalho (UC6)");
+                System.out.println("11. Atualizar Status de Trabalho");
+                System.out.println("12. Emitir Certificados do Evento (UC8)");
             }
             if (participanteLogado.getTipoPerfil() == TipoPerfil.AVALIADOR) {
                 System.out.println("-- Menu Avaliador --");
-                System.out.println("20. Listar Trabalhos para Avaliar");
-                System.out.println("21. Registrar Avaliação de Trabalho (UC7)");
+                System.out.println("13. Listar Trabalhos para Avaliar");
+                System.out.println("14. Registrar Avaliação de Trabalho (UC7)");
             }
             System.out.println("-- Sistema --");
-            System.out.println("30. Validar Certificado");
-            System.out.println("40. Logout");
+            System.out.println("15. Validar Certificado");
+            System.out.println("16. Logout");
             System.out.println("0. Sair do Sistema");
         }
     }
 
     private static void processarEscolhaMenuDeslogado(int choice) {
         switch (choice) {
-            case 1 -> login();
-            case 2 -> cadastrarParticipante();
-            case 3 -> visualizarEventosDisponiveisPublico();
-            case 4 -> validarCertificado();
+            case 1 ->
+                login(); //ok
+            case 2 ->
+                cadastrarParticipante(); //ok
+            case 3 ->
+                visualizarEventosDisponiveisPublico();
+            case 4 ->
+                validarCertificado();
             case 0 -> {
             }
-            default -> System.out.println("Opção inválida.");
+            default ->
+                System.out.println("Opção inválida.");
         }
-        
-            }
+
+    }
 
     private static void processarEscolhaMenuLogado(int choice) {
         switch (choice) {
-            case 1 -> visualizarEventosDisponiveisPublico();
-            // Reutiliza
-            case 2 -> inscreverEmEvento();
-            case 3 -> verMinhasInscricoes();
-            case 4 -> cancelarInscricao();
-            case 5 -> submeterTrabalho();
-            case 6 -> verMeusTrabalhos();
-            case 7 -> verMeusCertificados();
+            case 1 ->
+                visualizarEventosDisponiveisPublico();
+            case 2 ->
+                inscreverEmEvento();
+            case 3 ->
+                verMinhasInscricoes();
+            case 4 ->
+                cancelarInscricao();
+            case 5 ->
+                submeterTrabalho();
+            case 6 ->
+                verMeusTrabalhos();
+            case 7 ->
+                verMeusCertificados();
+            case 8 -> {
+                if (isPerfil(TipoPerfil.ORGANIZADOR)) {
+                    cadastrarNovoEvento();
+                } else {
+                    opcaoInvalida();
+                }
+            }
+            case 9 -> {
+                if (isPerfil(TipoPerfil.ORGANIZADOR)) {
+                    gerenciarMeusEventos();
+                } else {
+                    opcaoInvalida();
+                }
+            }
             case 10 -> {
-                if (isPerfil(TipoPerfil.ORGANIZADOR)) cadastrarNovoEvento(); else opcaoInvalida();
+                if (isPerfil(TipoPerfil.ORGANIZADOR)) {
+                    designarAvaliador();
+                } else {
+                    opcaoInvalida();
+                }
             }
             case 11 -> {
-                if (isPerfil(TipoPerfil.ORGANIZADOR)) gerenciarMeusEventos(); else opcaoInvalida();
+                if (isPerfil(TipoPerfil.ORGANIZADOR)) {
+                    atualizarStatusTrabalho();
+                } else {
+                    opcaoInvalida();
+                }
             }
             case 12 -> {
-                if (isPerfil(TipoPerfil.ORGANIZADOR)) designarAvaliador(); else opcaoInvalida();
+                if (isPerfil(TipoPerfil.ORGANIZADOR)) {
+                    emitirCertificadosDoEvento();
+                } else {
+                    opcaoInvalida();
+                }
             }
             case 13 -> {
-                if (isPerfil(TipoPerfil.ORGANIZADOR)) atualizarStatusTrabalho(); else opcaoInvalida();
+                if (isPerfil(TipoPerfil.AVALIADOR)) {
+                    listarTrabalhosParaAvaliar();
+                } else {
+                    opcaoInvalida();
+                }
             }
             case 14 -> {
-                if (isPerfil(TipoPerfil.ORGANIZADOR)) emitirCertificadosDoEvento(); else opcaoInvalida();
+                if (isPerfil(TipoPerfil.AVALIADOR)) {
+                    registrarAvaliacao();
+                } else {
+                    opcaoInvalida();
+                }
             }
-            case 20 -> {
-                if (isPerfil(TipoPerfil.AVALIADOR)) listarTrabalhosParaAvaliar(); else opcaoInvalida();
+            case 15 ->
+                validarCertificado();
+            case 16 ->
+                logout();
+            case 17 -> {
             }
-            case 21 -> {
-                if (isPerfil(TipoPerfil.AVALIADOR)) registrarAvaliacao(); else opcaoInvalida();
-            }
-            case 30 -> validarCertificado();
-            case 40 -> logout();
-            case 0 -> {
-            }
-            default -> System.out.println("Opção inválida.");
+            default ->
+                System.out.println("Opção inválida.");
         }
-        // Participante
-        // Organizador
-        // Avaliador
-        // Sistema
-        // Sair
-            }
+
+    }
 
     private static boolean isPerfil(TipoPerfil perfilNecessario) {
         return participanteLogado != null && participanteLogado.getTipoPerfil() == perfilNecessario;
     }
-    private static void opcaoInvalida() { System.out.println("Opção inválida ou perfil inadequado.");}
+
+    private static void opcaoInvalida() {
+        System.out.println("Opção inválida ou perfil inadequado.");
+    }
 
     // --- Métodos de Ação ---
     private static void login() {
@@ -177,12 +213,13 @@ public class SGEA {
         participanteLogado = null;
     }
 
+    //  UC1: O participante realiza seu cadastro no sistema
     private static void cadastrarParticipante() {
         System.out.println("\n--- Cadastro de Novo Participante ---");
         String nome = lerString("Nome completo: ");
         String email = lerString("E-mail: ");
         String instituicao = lerString("Instituição: ");
-        TipoPerfil perfil = lerTipoPerfil();
+        TipoPerfil perfil = TipoPerfil.PARTICIPANTE;
         try {
             Participante p = facade.cadastrarParticipante(nome, email, instituicao, perfil);
             System.out.println("Participante cadastrado com sucesso! ID: " + p.getId());
@@ -198,7 +235,7 @@ public class SGEA {
             if (eventos.isEmpty()) {
                 System.out.println("Nenhum evento disponível no momento.");
             } else {
-                eventos.forEach(e -> System.out.println(e.getId() + " - " + e.getNome() + " (Início: " + e.getDataInicio().format(DATE_FORMATTER) + ")"));
+                eventos.forEach(e -> System.out.println(e));
             }
         } catch (Exception e) {
             System.err.println("Erro ao listar eventos: " + e.getMessage());
@@ -228,6 +265,7 @@ public class SGEA {
         }
     }
 
+     // UC2: O participante visualiza a lista de eventos disponíveis e se inscreve em um evento de seu interesse
     private static void inscreverEmEvento() {
         System.out.println("\n--- Inscrever-se em Evento ---");
         visualizarEventosDisponiveisPublico();
@@ -268,23 +306,14 @@ public class SGEA {
 
     private static void submeterTrabalho() {
         System.out.println("\n--- Submeter Trabalho ---");
-        visualizarEventosDisponiveisPublico(); // Para o usuário ver os IDs dos eventos
+        verMinhasInscricoes();
         String eventoId = lerString("ID do Evento para submissão: ");
         String titulo = lerString("Título do Trabalho: ");
-        String arquivo = lerString("Nome do Arquivo (simulado): ");
-        // Para múltiplos autores, precisaríamos de uma lógica mais elaborada de input
-        // Simplificando: submete apenas o participante logado como autor
-        List<String> autoresIds = new ArrayList<>();
-        autoresIds.add(participanteLogado.getId());
-        // Adicionar outros autores:
-        while (true) {
-            String outroAutorId = lerString("ID de outro autor (ou deixe em branco para finalizar): ");
-            if (outroAutorId.trim().isEmpty()) break;
-            autoresIds.add(outroAutorId);
-        }
+        String arquivo = lerString("Nome do Arquivo: ");
+        String autor = participanteLogado.getId();
 
         try {
-            Trabalho t = facade.submeterTrabalho(autoresIds, eventoId, titulo, arquivo);
+            Trabalho t = facade.submeterTrabalho(autor, eventoId, titulo, arquivo);
             System.out.println("Trabalho '" + t.getTitulo() + "' submetido com sucesso! ID: " + t.getId());
         } catch (Exception e) {
             System.err.println("Erro ao submeter trabalho: " + e.getMessage());
@@ -304,7 +333,7 @@ public class SGEA {
             System.err.println("Erro ao listar trabalhos: " + e.getMessage());
         }
     }
-    
+
     private static void verMeusCertificados() {
         System.out.println("\n--- Meus Certificados ---");
         try {
@@ -313,10 +342,10 @@ public class SGEA {
                 System.out.println("Você não possui certificados.");
             } else {
                 certificados.forEach(c -> System.out.println(
-                    c.getId() + " - Tipo: " + c.getTipo() + 
-                    ", Evento: " + c.getEvento().getNome() +
-                    (c.getTrabalho() != null ? ", Trabalho: " + c.getTrabalho().getTitulo() : "") +
-                    ", Código: " + c.getCodigoValidacao()
+                        c.getId() + " - Tipo: " + c.getTipo()
+                        + ", Evento: " + c.getEvento().getNome()
+                        + (c.getTrabalho() != null ? ", Trabalho: " + c.getTrabalho().getTitulo() : "")
+                        + ", Código: " + c.getCodigoValidacao()
                 ));
             }
         } catch (Exception e) {
@@ -378,8 +407,11 @@ public class SGEA {
                 case 1:
                     List<Inscricao> inscricoes = facade.visualizarInscritosEvento(eventoId);
                     System.out.println("Inscritos no evento '" + eventoSelecionado.getNome() + "':");
-                    if (inscricoes.isEmpty()) System.out.println("Nenhum inscrito.");
-                    else inscricoes.forEach(i -> System.out.println(i.getParticipante().getNomeCompleto() + " (ID Inscrição: " + i.getId() + ", Status: " + i.getStatus() + (i.isPresencaConfirmada() ? ", PRESENTE" : "") + ")"));
+                    if (inscricoes.isEmpty()) {
+                        System.out.println("Nenhum inscrito.");
+                    } else {
+                        inscricoes.forEach(i -> System.out.println(i.getParticipante().getNomeCompleto() + " (ID Inscrição: " + i.getId() + ", Status: " + i.getStatus() + (i.isPresencaConfirmada() ? ", PRESENTE" : "") + ")"));
+                    }
                     break;
                 case 2:
                     String inscricaoId = lerString("ID da Inscrição para confirmar presença: ");
@@ -388,7 +420,7 @@ public class SGEA {
                     break;
                 case 3:
                     System.out.println("Editando detalhes (deixe em branco para não alterar):");
-                    String novoNome = lerStringOpcional("Novo Nome ("+eventoSelecionado.getNome()+"): ");
+                    String novoNome = lerStringOpcional("Novo Nome (" + eventoSelecionado.getNome() + "): ");
                     String novaDesc = lerStringOpcional("Nova Descrição: ");
                     // Adicionar mais campos para edição conforme necessário
                     facade.atualizarDetalhesEvento(eventoId, participanteLogado.getId(), novoNome, novaDesc, null, null, null, null);
@@ -400,35 +432,43 @@ public class SGEA {
                     facade.definirPeriodoSubmissaoTrabalhos(eventoId, participanteLogado.getId(), subInicio, subFim);
                     System.out.println("Período de submissão atualizado.");
                     break;
-                case 0: break;
-                default: System.out.println("Opção inválida.");
+                case 0:
+                    break;
+                default:
+                    System.out.println("Opção inválida.");
             }
         } catch (Exception e) {
             System.err.println("Erro ao gerenciar evento: " + e.getMessage());
         }
     }
-    
+
     private static void designarAvaliador() {
         System.out.println("\n--- Designar Avaliador para Trabalho ---");
         // Listar eventos do organizador
         List<Evento> meusEventos = facade.listarEventosPorOrganizador(participanteLogado.getId());
-        if (meusEventos.isEmpty()) { System.out.println("Nenhum evento seu para gerenciar trabalhos."); return; }
+        if (meusEventos.isEmpty()) {
+            System.out.println("Nenhum evento seu para gerenciar trabalhos.");
+            return;
+        }
         meusEventos.forEach(e -> System.out.println(e.getId() + " - " + e.getNome()));
         String eventoId = lerString("ID do Evento do trabalho: ");
-        
-        List<Trabalho> trabalhos = facade.listarTrabalhosPorEvento(eventoId).stream()
-            .filter(t -> t.getStatus() == StatusTrabalho.SUBMETIDO || t.getStatus() == StatusTrabalho.EM_AVALIACAO)
-            .collect(Collectors.toList());
 
-        if (trabalhos.isEmpty()) { System.out.println("Nenhum trabalho pendente de avaliação neste evento."); return; }
+        List<Trabalho> trabalhos = facade.listarTrabalhosPorEvento(eventoId).stream()
+                .filter(t -> t.getStatus() == StatusTrabalho.SUBMETIDO || t.getStatus() == StatusTrabalho.EM_AVALIACAO)
+                .collect(Collectors.toList());
+
+        if (trabalhos.isEmpty()) {
+            System.out.println("Nenhum trabalho pendente de avaliação neste evento.");
+            return;
+        }
         System.out.println("Trabalhos pendentes:");
         trabalhos.forEach(t -> System.out.println(t.getId() + " - " + t.getTitulo()));
         String trabalhoId = lerString("ID do Trabalho: ");
 
         System.out.println("Avaliadores disponíveis:");
         facade.listarTodosParticipantes().stream()
-            .filter(p -> p.getTipoPerfil() == TipoPerfil.AVALIADOR)
-            .forEach(p -> System.out.println(p.getId() + " - " + p.getNomeCompleto()));
+                .filter(p -> p.getTipoPerfil() == TipoPerfil.AVALIADOR)
+                .forEach(p -> System.out.println(p.getId() + " - " + p.getNomeCompleto()));
         String avaliadorId = lerString("ID do Avaliador: ");
 
         try {
@@ -443,12 +483,18 @@ public class SGEA {
         System.out.println("\n--- Atualizar Status de Trabalho ---");
         // Similar a designarAvaliador, listar eventos, depois trabalhos
         List<Evento> meusEventos = facade.listarEventosPorOrganizador(participanteLogado.getId());
-        if (meusEventos.isEmpty()) { System.out.println("Nenhum evento seu para gerenciar trabalhos."); return; }
+        if (meusEventos.isEmpty()) {
+            System.out.println("Nenhum evento seu para gerenciar trabalhos.");
+            return;
+        }
         meusEventos.forEach(e -> System.out.println(e.getId() + " - " + e.getNome()));
         String eventoId = lerString("ID do Evento do trabalho: ");
 
         List<Trabalho> trabalhos = facade.listarTrabalhosPorEvento(eventoId);
-        if (trabalhos.isEmpty()) { System.out.println("Nenhum trabalho neste evento."); return; }
+        if (trabalhos.isEmpty()) {
+            System.out.println("Nenhum trabalho neste evento.");
+            return;
+        }
         trabalhos.forEach(t -> System.out.println(t.getId() + " - " + t.getTitulo() + " (Status Atual: " + t.getStatus() + ")"));
         String trabalhoId = lerString("ID do Trabalho para atualizar status: ");
         StatusTrabalho novoStatus = lerStatusTrabalho();
@@ -461,9 +507,12 @@ public class SGEA {
     }
 
     private static void emitirCertificadosDoEvento() {
-         System.out.println("\n--- Emitir Certificados do Evento ---");
+        System.out.println("\n--- Emitir Certificados do Evento ---");
         List<Evento> meusEventos = facade.listarEventosPorOrganizador(participanteLogado.getId());
-        if (meusEventos.isEmpty()) { System.out.println("Nenhum evento seu para emitir certificados."); return; }
+        if (meusEventos.isEmpty()) {
+            System.out.println("Nenhum evento seu para emitir certificados.");
+            return;
+        }
         meusEventos.forEach(e -> System.out.println(e.getId() + " - " + e.getNome()));
         String eventoId = lerString("ID do Evento para emitir certificados: ");
 
@@ -471,7 +520,7 @@ public class SGEA {
         try {
             List<Certificado> cParticipacao = facade.emitirCertificadosParticipacaoEvento(eventoId);
             System.out.println(cParticipacao.size() + " certificados de participação emitidos/verificados.");
-            
+
             List<Certificado> cApresentacao = facade.emitirCertificadosApresentacaoTrabalhoEvento(eventoId);
             System.out.println(cApresentacao.size() + " certificados de apresentação de trabalho emitidos/verificados.");
 
@@ -483,7 +532,6 @@ public class SGEA {
         }
     }
 
-
     // --- Métodos do Avaliador ---
     private static void listarTrabalhosParaAvaliar() {
         System.out.println("\n--- Trabalhos Designados para Avaliação (Simplificado) ---");
@@ -492,15 +540,15 @@ public class SGEA {
         try {
             // Tentar listar todos os trabalhos EM_AVALIACAO como uma aproximação
             List<Trabalho> todosTrabalhos = new ArrayList<>();
-            facade.listarTodosEventos().forEach(evento -> 
-                todosTrabalhos.addAll(facade.listarTrabalhosPorEvento(evento.getId()))
+            facade.listarTodosEventos().forEach(evento
+                    -> todosTrabalhos.addAll(facade.listarTrabalhosPorEvento(evento.getId()))
             );
 
             List<Trabalho> paraAvaliar = todosTrabalhos.stream()
-                .filter(t -> t.getStatus() == StatusTrabalho.EM_AVALIACAO)
-                // Adicionar filtro se houver lista de avaliadores designados no trabalho
-                // .filter(t -> t.getAvaliadoresDesignados().contains(participanteLogado)) 
-                .collect(Collectors.toList());
+                    .filter(t -> t.getStatus() == StatusTrabalho.EM_AVALIACAO)
+                    // Adicionar filtro se houver lista de avaliadores designados no trabalho
+                    // .filter(t -> t.getAvaliadoresDesignados().contains(participanteLogado)) 
+                    .collect(Collectors.toList());
 
             if (paraAvaliar.isEmpty()) {
                 System.out.println("Nenhum trabalho atualmente designado para você ou em status de avaliação.");
@@ -531,6 +579,7 @@ public class SGEA {
         System.out.print(prompt);
         return scanner.nextLine();
     }
+
     private static String lerStringOpcional(String prompt) {
         System.out.print(prompt);
         String input = scanner.nextLine();
@@ -547,6 +596,7 @@ public class SGEA {
             }
         }
     }
+
     private static double lerDouble(String prompt) {
         while (true) {
             try {
@@ -568,10 +618,13 @@ public class SGEA {
             }
         }
     }
+
     private static LocalDate lerDataOpcional(String prompt) {
         System.out.print(prompt);
         String input = scanner.nextLine();
-        if (input.trim().isEmpty()) return null;
+        if (input.trim().isEmpty()) {
+            return null;
+        }
         while (true) {
             try {
                 return LocalDate.parse(input, DATE_FORMATTER);
@@ -579,26 +632,13 @@ public class SGEA {
                 System.out.println("Formato de data inválido. Use yyyy-MM-dd ou deixe em branco.");
                 System.out.print(prompt); // Pergunta novamente
                 input = scanner.nextLine();
-                if (input.trim().isEmpty()) return null;
+                if (input.trim().isEmpty()) {
+                    return null;
+                }
             }
         }
     }
 
-    private static TipoPerfil lerTipoPerfil() {
-        while (true) {
-            System.out.print("Tipo de Perfil (");
-            for (TipoPerfil tp : TipoPerfil.values()) {
-                System.out.print(tp.name() + " ");
-            }
-            System.out.print("): ");
-            String input = scanner.nextLine().toUpperCase();
-            try {
-                return TipoPerfil.valueOf(input);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Tipo de perfil inválido.");
-            }
-        }
-    }
     private static StatusTrabalho lerStatusTrabalho() {
         while (true) {
             System.out.print("Novo Status do Trabalho (");
@@ -617,42 +657,81 @@ public class SGEA {
 
     // --- Dados Iniciais para Teste ---
     private static void seedInitialData() {
-        System.out.println("Semeando dados iniciais...");
         try {
             Participante org = facade.cadastrarParticipante("Organizador Chefe", "org@sgea.com", "IFNMG", TipoPerfil.ORGANIZADOR);
             System.out.println("  Criado Organizador: " + org.getNomeCompleto() + " (ID: " + org.getId() + ")");
 
-            Participante aluno1 = facade.cadastrarParticipante("Aluno Fulano", "aluno1@sgea.com", "IFNMG", TipoPerfil.ALUNO);
+            Participante aluno1 = facade.cadastrarParticipante("Aluno Fulano", "aluno1@sgea.com", "IFNMG", TipoPerfil.PARTICIPANTE);
             System.out.println("  Criado Aluno: " + aluno1.getNomeCompleto() + " (ID: " + aluno1.getId() + ")");
-            
-            Participante aluno2 = facade.cadastrarParticipante("Aluna Ciclana", "aluno2@sgea.com", "IFNMG", TipoPerfil.ALUNO);
+
+            Participante aluno2 = facade.cadastrarParticipante("Aluna Ciclana", "aluno2@sgea.com", "IFNMG", TipoPerfil.PARTICIPANTE);
             System.out.println("  Criado Aluno: " + aluno2.getNomeCompleto() + " (ID: " + aluno2.getId() + ")");
 
-            Participante avaliador = facade.cadastrarParticipante("Prof. Avalion", "avaliador@sgea.com", "IFNMG", TipoPerfil.AVALIADOR);
-            System.out.println("  Criado Avaliador: " + avaliador.getNomeCompleto() + " (ID: " + avaliador.getId() + ")");
+            Participante aluno3 = facade.cadastrarParticipante("Aluno Beltrano", "aluno3@sgea.com", "IFNMG", TipoPerfil.PARTICIPANTE);
+            System.out.println("  Criado Aluno: " + aluno3.getNomeCompleto() + " (ID: " + aluno3.getId() + ")");
 
-            Evento evento = facade.cadastrarEvento(
+            Participante aluno4 = facade.cadastrarParticipante("Aluna Daniela", "aluno4@sgea.com", "IFNMG", TipoPerfil.PARTICIPANTE);
+            System.out.println("  Criado Aluno: " + aluno4.getNomeCompleto() + " (ID: " + aluno4.getId() + ")");
+
+            Participante aluno5 = facade.cadastrarParticipante("Aluno Eduardo", "aluno5@sgea.com", "IFNMG", TipoPerfil.PARTICIPANTE);
+            System.out.println("  Criado Aluno: " + aluno5.getNomeCompleto() + " (ID: " + aluno5.getId() + ")");
+
+            Participante avaliador1 = facade.cadastrarParticipante("Prof. Avalion", "avaliador1@sgea.com", "IFNMG", TipoPerfil.AVALIADOR);
+            System.out.println("  Criado Avaliador: " + avaliador1.getNomeCompleto() + " (ID: " + avaliador1.getId() + ")");
+
+            Participante avaliador2 = facade.cadastrarParticipante("Prof. Juliana Silva", "avaliador2@sgea.com", "IFNMG", TipoPerfil.AVALIADOR);
+            System.out.println("  Criado Avaliador: " + avaliador2.getNomeCompleto() + " (ID: " + avaliador2.getId() + ")");
+
+            Participante avaliador3 = facade.cadastrarParticipante("Prof. Marcos Andrade", "avaliador3@sgea.com", "IFNMG", TipoPerfil.AVALIADOR);
+            System.out.println("  Criado Avaliador: " + avaliador3.getNomeCompleto() + " (ID: " + avaliador3.getId() + ")");
+
+            Evento evento1 = facade.cadastrarEvento(
                     "Semana Acadêmica de TI",
-                    " palestras e minicursos sobre tecnologia.",
+                    "Palestras e minicursos sobre tecnologia.",
                     LocalDate.now().plusDays(10),
                     LocalDate.now().plusDays(12),
                     "Auditório Principal IFNMG",
-                    100,
+                    2,
                     org.getId(),
                     LocalDate.now().plusDays(1),
                     LocalDate.now().plusDays(8)
             );
-            System.out.println("  Criado Evento: " + evento.getNome() + " (ID: " + evento.getId() + ")");
-            
-            // Inscrever aluno1 no evento
-            facade.inscreverEmEvento(aluno1.getId(), evento.getId());
-            System.out.println("  " + aluno1.getNomeCompleto() + " inscrito na " + evento.getNome());
+            System.out.println("  Criado Evento: " + evento1.getNome() + " (ID: " + evento1.getId() + ")");
 
+            Evento evento2 = facade.cadastrarEvento(
+                    "Simpósio de Inovação e Empreendedorismo",
+                    "Atividades voltadas para empreendedorismo, startups e inovação.",
+                    LocalDate.now().plusDays(20),
+                    LocalDate.now().plusDays(22),
+                    "Sala de Conferências IFNMG",
+                    80,
+                    org.getId(),
+                    LocalDate.now().plusDays(5),
+                    LocalDate.now().plusDays(18)
+            );
+            System.out.println("  Criado Evento: " + evento2.getNome() + " (ID: " + evento2.getId() + ")");
+
+            Evento evento3 = facade.cadastrarEvento(
+                    "Workshop de Programação",
+                    "Oficinas práticas de linguagens e desenvolvimento de software.",
+                    LocalDate.now().plusDays(30),
+                    LocalDate.now().plusDays(31),
+                    "Laboratório de Informática IFNMG",
+                    60,
+                    org.getId(),
+                    LocalDate.now().plusDays(10),
+                    LocalDate.now().plusDays(28)
+            );
+            System.out.println("  Criado Evento: " + evento3.getNome() + " (ID: " + evento3.getId() + ")");
+
+            facade.inscreverEmEvento(aluno1.getId(), evento1.getId());
+            System.out.println("  " + aluno1.getNomeCompleto() + " inscrito na " + evento1.getNome());
+            facade.inscreverEmEvento(aluno2.getId(), evento1.getId());
+            System.out.println("  " + aluno2.getNomeCompleto() + " inscrito na " + evento1.getNome());
 
         } catch (Exception e) {
             System.err.println("Erro ao semear dados: " + e.getMessage());
             e.printStackTrace();
         }
-        System.out.println("Dados iniciais semeados.\n");
     }
 }

@@ -1,8 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package controller;
+
 import domain.Certificado;
 import domain.Evento;
 import domain.Inscricao;
@@ -18,22 +15,22 @@ import repository.EventoRepository;
 import repository.InscricaoRepository;
 import repository.ParticipanteRepository;
 import repository.TrabalhoRepository;
+
 /**
  *
  * @author enio1
  */
 public class CertificadoController {
-    
-    private final CertificadoRepository
-            certificadoRepository;
+
+    private final CertificadoRepository certificadoRepository;
     private final EventoRepository eventoRepository;
     private final InscricaoRepository inscricaoRepository;
     private final TrabalhoRepository trabalhoRepository;
     private final ParticipanteRepository participanteRepository; // Para certificados de organizador/avaliador
 
     public CertificadoController(CertificadoRepository certificadoRepository, EventoRepository eventoRepository,
-                              InscricaoRepository inscricaoRepository, TrabalhoRepository trabalhoRepository,
-                              ParticipanteRepository participanteRepository) {
+            InscricaoRepository inscricaoRepository, TrabalhoRepository trabalhoRepository,
+            ParticipanteRepository participanteRepository) {
         this.certificadoRepository = certificadoRepository;
         this.eventoRepository = eventoRepository;
         this.inscricaoRepository = inscricaoRepository;
@@ -56,7 +53,7 @@ public class CertificadoController {
         for (Inscricao inscricao : inscricoesComPresenca) {
             // Evitar duplicidade de certificados
             boolean jaEmitido = certificadoRepository.findAllByParticipanteId(inscricao.getParticipante().getId()).stream()
-                .anyMatch(c -> c.getEvento().getId().equals(eventoId) && c.getTipo() == TipoCertificado.PARTICIPACAO);
+                    .anyMatch(c -> c.getEvento().getId().equals(eventoId) && c.getTipo() == TipoCertificado.PARTICIPACAO);
 
             if (!jaEmitido) {
                 Certificado cert = new Certificado(TipoCertificado.PARTICIPACAO, inscricao.getParticipante(), evento);
@@ -80,15 +77,14 @@ public class CertificadoController {
 
         for (Trabalho trabalho : trabalhosNoEvento) {
             if (trabalho.foiAprovado() && trabalho.foiApresentado()) { // Usando métodos do domínio
-                for (Participante autor : trabalho.getAutores()) {
-                    // Evitar duplicidade
-                    boolean jaEmitido = certificadoRepository.findAllByParticipanteId(autor.getId()).stream()
-                        .anyMatch(c -> c.getTrabalho() != null && c.getTrabalho().getId().equals(trabalho.getId()) &&
-                                       c.getTipo() == TipoCertificado.APRESENTACAO_TRABALHO);
-                    if (!jaEmitido) {
-                        Certificado cert = new Certificado(autor, evento, trabalho); // Construtor específico
-                        certificadosEmitidos.add(certificadoRepository.save(cert));
-                    }
+                Participante autor = trabalho.getAutor();
+                boolean jaEmitido = certificadoRepository.findAllByParticipanteId(autor.getId()).stream()
+                        .anyMatch(c -> c.getTrabalho() != null && c.getTrabalho().getId().equals(trabalho.getId())
+                        && c.getTipo() == TipoCertificado.APRESENTACAO_TRABALHO);
+                if (!jaEmitido) {
+                    Certificado cert = new Certificado(autor, evento, trabalho);
+                    certificadosEmitidos.add(certificadoRepository.save(cert));
+
                 }
             }
         }
@@ -97,17 +93,17 @@ public class CertificadoController {
 
     public Certificado emitirCertificadoOrganizador(String eventoId, String organizadorId) {
         Evento evento = eventoRepository.findById(eventoId)
-            .orElseThrow(() -> new IllegalArgumentException("Evento com ID " + eventoId + " não encontrado."));
+                .orElseThrow(() -> new IllegalArgumentException("Evento com ID " + eventoId + " não encontrado."));
         Participante organizador = participanteRepository.findById(organizadorId)
-            .orElseThrow(() -> new IllegalArgumentException("Organizador com ID " + organizadorId + " não encontrado."));
+                .orElseThrow(() -> new IllegalArgumentException("Organizador com ID " + organizadorId + " não encontrado."));
 
         if (!evento.getOrganizadorResponsavel().getId().equals(organizadorId)) {
             throw new IllegalArgumentException("Participante não é o organizador responsável deste evento.");
         }
-         if (LocalDate.now().isBefore(evento.getDataFim().plusDays(1))) {
+        if (LocalDate.now().isBefore(evento.getDataFim().plusDays(1))) {
             throw new IllegalStateException("Certificados de organização só podem ser emitidos após o término do evento.");
         }
-        
+
         boolean jaEmitido = certificadoRepository.findAllByParticipanteId(organizador.getId()).stream()
                 .anyMatch(c -> c.getEvento().getId().equals(eventoId) && c.getTipo() == TipoCertificado.ORGANIZACAO);
         if (jaEmitido) {
@@ -117,7 +113,6 @@ public class CertificadoController {
         Certificado cert = new Certificado(TipoCertificado.ORGANIZACAO, organizador, evento);
         return certificadoRepository.save(cert);
     }
-
 
     // Similar para Certificado de Avaliador, se necessário.
 }

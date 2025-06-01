@@ -34,30 +34,19 @@ public class InscricaoController {
         Evento evento = eventoRepository.findById(eventoId)
                 .orElseThrow(() -> new IllegalArgumentException("Evento com ID " + eventoId + " não encontrado."));
 
-        // RN 1: Capacidade máxima
+        // Regra de Negócio 1: Capacidade máxima atingida
         if (evento.isLotado()) {
             throw new IllegalStateException("Evento '" + evento.getNome() + "' atingiu a capacidade máxima.");
         }
 
-        // RN: Participante não pode se inscrever múltiplas vezes no mesmo evento (se inscrição ativa)
         Optional<Inscricao> inscricaoExistente = inscricaoRepository.findByParticipanteIdAndEventoId(participanteId, eventoId);
         if (inscricaoExistente.isPresent() && inscricaoExistente.get().getStatus() == StatusInscricao.ATIVA) {
             throw new IllegalStateException("Participante já está inscrito ativamente neste evento.");
         }
-        
-        // RN: Verificar se período de inscrição do evento está aberto (se essa regra existir e for implementada em Evento)
-        // Ex: if (!evento.isPeriodoInscricaoAberto(LocalDate.now())) {
-        // throw new IllegalStateException("Período de inscrição para o evento '" + evento.getNome() + "' está fechado.");
-        // }
-
 
         Inscricao novaInscricao = new Inscricao(LocalDate.now(), evento, participante);
-        // Adiciona a inscrição à lista interna do evento (Information Expert)
-        // O save do evento aqui é opcional dependendo de como a persistência de coleções é gerenciada.
-        // Para repositórios em memória simples, modificar o objeto evento pode ser suficiente se for a mesma instância.
-        // Em JPA, o @OneToMany faria a gestão.
         evento.adicionarInscricaoInterna(novaInscricao); 
-        // eventoRepository.save(evento); // Se necessário para persistir a mudança na coleção de inscrições do evento
+        eventoRepository.save(evento); // Se necessário para persistir a mudança na coleção de inscrições do evento
 
         return inscricaoRepository.save(novaInscricao);
     }

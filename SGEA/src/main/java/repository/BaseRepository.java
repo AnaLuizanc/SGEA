@@ -36,8 +36,6 @@ public abstract class BaseRepository<T extends Identifiable<ID>, ID> {
         }
         ID entityId = entity.getId();
         if (entityId == null) {
-            // Para este projeto, os IDs (UUIDs) são gerados na construção da entidade.
-            // Se o ID fosse gerado pelo banco, a lógica aqui seria diferente (ex: não verificar ID nulo na criação).
             throw new IllegalArgumentException(this.entityName + " ID não pode ser nulo para salvar.");
         }
         entities.put(entityId, entity);

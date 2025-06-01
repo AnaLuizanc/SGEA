@@ -101,9 +101,8 @@ public class Evento implements Identifiable<String> {
                 .anyMatch(i -> i.getParticipante().equals(participante) && i.getStatus() == StatusInscricao.ATIVA);
     }
 
-    public void adicionarInscricaoInterna(Inscricao inscricao) { // Chamado pelo InscricaoService
+    public void adicionarInscricaoInterna(Inscricao inscricao) { 
         if (inscricao == null) throw new IllegalArgumentException("Inscrição não pode ser nula.");
-        // A validação de lotação e se já está inscrito é feita no InscricaoService antes de chamar este
         this.inscricoes.add(inscricao);
     }
 
@@ -128,10 +127,12 @@ public class Evento implements Identifiable<String> {
     @Override
     public String toString() {
         long ativos = inscricoes.stream().filter(i -> i.getStatus() == StatusInscricao.ATIVA).count();
-        return "Evento ID: " + id + ", Nome: '" + nome + '\'' +
-               ", Data: " + dataInicio + " a " + dataFim +
-               ", Local: '" + local + '\'' + ", Capacidade: " + capacidadeMaxima +
-               ", Inscritos Ativos: " + ativos;
+        return "Evento ID: " + id 
+                + "\nNome: '" + nome + '\'' 
+                + "\nData: " + dataInicio + " até " + dataFim 
+                + "\nLocal: '" + local + '\'' 
+                + "\nCapacidade: " + capacidadeMaxima  
+                +  "\nInscritos Ativos: " + ativos + "\n";
     }
 
     @Override
