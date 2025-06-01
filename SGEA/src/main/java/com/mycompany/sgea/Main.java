@@ -60,30 +60,29 @@ public class Main {
         } else {
             System.out.println("Logado como: " + participanteLogado.getNomeCompleto() + " (" + participanteLogado.getTipoPerfil() + ")");
             System.out.println("-- Menu Participante --");
-            System.out.println("1. Visualizar Eventos Disponíveis (UC2)");
-            System.out.println("2. Inscrever-se em Evento (UC2)");
+            System.out.println("1. Visualizar Eventos Disponíveis");
+            System.out.println("2. Inscrever-se em Evento");
             System.out.println("3. Ver Minhas Inscrições");
-            System.out.println("4. Cancelar Inscrição (FR5)");
-            System.out.println("5. Submeter Trabalho (UC3)");
+            System.out.println("4. Cancelar Inscrição");
+            System.out.println("5. Submeter Trabalho");
             System.out.println("6. Ver Meus Trabalhos Submetidos");
             System.out.println("7. Ver Meus Certificados");
 
             if (participanteLogado.getTipoPerfil() == TipoPerfil.ORGANIZADOR) {
                 System.out.println("-- Menu Organizador --");
-                System.out.println("8. Cadastrar Novo Evento (UC4)");
-                System.out.println("9. Gerenciar Meus Eventos (UC5, FR7)");
-                System.out.println("10. Designar Avaliador para Trabalho (UC6)");
+                System.out.println("8. Cadastrar Novo Evento");
+                System.out.println("9. Gerenciar Meus Eventos");
+                System.out.println("10. Designar Avaliador para Trabalho");
                 System.out.println("11. Atualizar Status de Trabalho");
-                System.out.println("12. Emitir Certificados do Evento (UC8)");
+                System.out.println("12. Emitir Certificados do Evento");
             }
             if (participanteLogado.getTipoPerfil() == TipoPerfil.AVALIADOR) {
                 System.out.println("-- Menu Avaliador --");
                 System.out.println("13. Listar Trabalhos para Avaliar");
-                System.out.println("14. Registrar Avaliação de Trabalho (UC7)");
+                System.out.println("14. Registrar Avaliação de Trabalho");
             }
             System.out.println("-- Sistema --");
-            System.out.println("15. Validar Certificado");
-            System.out.println("16. Logout");
+            System.out.println("15. Logout");
             System.out.println("0. Sair do Sistema");
         }
     }
@@ -109,11 +108,11 @@ public class Main {
     private static void processarEscolhaMenuLogado(int choice) {
         switch (choice) {
             case 1 ->
-                visualizarEventosDisponiveisPublico();
+                visualizarEventosDisponiveisPublico(); //ok
             case 2 ->
-                inscreverEmEvento();
+                inscreverEmEvento(); //ok
             case 3 ->
-                verMinhasInscricoes();
+                verMinhasInscricoes(); //ok
             case 4 ->
                 cancelarInscricao();
             case 5 ->
@@ -362,7 +361,6 @@ public class Main {
         LocalDate dataFim = lerData("Data de Fim (yyyy-MM-dd): ");
         String local = lerString("Local/Link: ");
         int capacidade = lerInteiro("Capacidade Máxima: ");
-        System.out.println("Definir período de submissão de trabalhos (opcional):");
         LocalDate subInicio = lerDataOpcional("Data de Início da Submissão (yyyy-MM-dd ou enter para pular): ");
         LocalDate subFim = null;
         if (subInicio != null) {

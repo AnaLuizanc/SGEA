@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package controller;
 import domain.Evento;
 import domain.Inscricao;
@@ -46,7 +42,7 @@ public class InscricaoController {
 
         Inscricao novaInscricao = new Inscricao(LocalDate.now(), evento, participante);
         evento.adicionarInscricaoInterna(novaInscricao); 
-        eventoRepository.save(evento); // Se necessário para persistir a mudança na coleção de inscrições do evento
+        // eventoRepository.save(evento); // Se necessário para persistir a mudança na coleção de inscrições do evento
 
         return inscricaoRepository.save(novaInscricao);
     }

@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package domain;
 
 import domain.enums.StatusInscricao;
@@ -19,16 +15,16 @@ import repository.Identifiable;
  * @author enio1
  */
 public class Evento implements Identifiable<String> {
-   private String id;
+    private final String id;
     private String nome;
     private String descricao;
     private LocalDate dataInicio;
     private LocalDate dataFim;
-    private String local; // Ou link se online
+    private String local;
     private int capacidadeMaxima;
     private LocalDate periodoSubmissaoInicio;
     private LocalDate periodoSubmissaoFim;
-    private Participante organizadorResponsavel; // Um participante com perfil ORGANIZADOR
+    private Participante organizadorResponsavel;
 
     private final List<Inscricao> inscricoes;
     private final List<Trabalho> trabalhos;
