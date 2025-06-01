@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package domain;
 
 import domain.enums.TipoPerfil;
@@ -20,11 +16,6 @@ public class Participante  implements Identifiable<String> {
     private String email;
     private String instituicao;
     private TipoPerfil tipoPerfil;
-
-    // Relacionamentos (gerenciados pelos 'donos' das coleções ou por serviços)
-    // private List<Inscricao> inscricoes; // A Inscricao conhece o Participante
-    // private List<Trabalho> trabalhosSubmetidos; // O Trabalho conhece seus autores
-    // private List<Avaliacao> avaliacoesFeitas; // A Avaliacao conhece o Avaliador
 
     public Participante(String nomeCompleto, String email, String instituicao, TipoPerfil tipoPerfil) {
         this.id = UUID.randomUUID().toString();
@@ -56,7 +47,7 @@ public class Participante  implements Identifiable<String> {
         return tipoPerfil;
     }
 
-    // Setters (se necessários para edição)
+    // Setters 
     public void setNomeCompleto(String nomeCompleto) {
         this.nomeCompleto = nomeCompleto;
     }

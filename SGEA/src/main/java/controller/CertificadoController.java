@@ -26,7 +26,7 @@ public class CertificadoController {
     private final EventoRepository eventoRepository;
     private final InscricaoRepository inscricaoRepository;
     private final TrabalhoRepository trabalhoRepository;
-    private final ParticipanteRepository participanteRepository; // Para certificados de organizador/avaliador
+    private final ParticipanteRepository participanteRepository; 
 
     public CertificadoController(CertificadoRepository certificadoRepository, EventoRepository eventoRepository,
             InscricaoRepository inscricaoRepository, TrabalhoRepository trabalhoRepository,
@@ -42,7 +42,7 @@ public class CertificadoController {
         Evento evento = eventoRepository.findById(eventoId)
                 .orElseThrow(() -> new IllegalArgumentException("Evento com ID " + eventoId + " não encontrado."));
 
-        // RN 5: Certificados de participação só são emitidos após a data de término do evento
+        // Regra de Negócio 5: Certificados de participação só são emitidos após a data de término do evento
         if (LocalDate.now().isBefore(evento.getDataFim().plusDays(1))) { // Considerar 1 dia após o término
             throw new IllegalStateException("Certificados de participação só podem ser emitidos após o término do evento.");
         }
@@ -67,7 +67,7 @@ public class CertificadoController {
         Evento evento = eventoRepository.findById(eventoId)
                 .orElseThrow(() -> new IllegalArgumentException("Evento com ID " + eventoId + " não encontrado."));
 
-        // RN 6: Certificados de apresentação de trabalho só são emitidos para trabalhos aprovados e após a data de término do evento.
+        // Rgra de Negócio 6: Certificados de apresentação de trabalho só são emitidos para trabalhos aprovados e após a data de término do evento.
         if (LocalDate.now().isBefore(evento.getDataFim().plusDays(1))) {
             throw new IllegalStateException("Certificados de apresentação só podem ser emitidos após o término do evento.");
         }
@@ -76,7 +76,7 @@ public class CertificadoController {
         List<Trabalho> trabalhosNoEvento = trabalhoRepository.findAllByEventoId(eventoId);
 
         for (Trabalho trabalho : trabalhosNoEvento) {
-            if (trabalho.foiAprovado() && trabalho.foiApresentado()) { // Usando métodos do domínio
+            if (trabalho.foiAprovado() && trabalho.foiApresentado()) {
                 Participante autor = trabalho.getAutor();
                 boolean jaEmitido = certificadoRepository.findAllByParticipanteId(autor.getId()).stream()
                         .anyMatch(c -> c.getTrabalho() != null && c.getTrabalho().getId().equals(trabalho.getId())
@@ -113,6 +113,4 @@ public class CertificadoController {
         Certificado cert = new Certificado(TipoCertificado.ORGANIZACAO, organizador, evento);
         return certificadoRepository.save(cert);
     }
-
-    // Similar para Certificado de Avaliador, se necessário.
 }

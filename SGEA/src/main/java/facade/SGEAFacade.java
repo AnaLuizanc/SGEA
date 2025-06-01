@@ -65,7 +65,6 @@ public class SGEAFacade {
     }
 
     // --- Métodos da Fachada ---
-    // UC1: O participante realiza seu cadastro no sistema;
     public Participante cadastrarParticipante(String nomeCompleto, String email, String instituicao, TipoPerfil tipoPerfil) {
         return participanteController.cadastrarParticipante(nomeCompleto, email, instituicao, tipoPerfil);
     }
@@ -102,7 +101,6 @@ public class SGEAFacade {
         return inscricaoController.listarInscricoesPorParticipante(participanteId);
     }
 
-    // UC3: O participante submete um trabalho para um evento no qual está inscrito;
     public Trabalho submeterTrabalho(String idAutor, String eventoId, String titulo, String arquivo) {
         return trabalhoController.submeterTrabalho(idAutor, eventoId, titulo, arquivo);
     }
@@ -115,7 +113,6 @@ public class SGEAFacade {
         return trabalhoRepository.findById(trabalhoId);
     }
 
-    // UC4: O organizador cadastra um novo evento no sistema;
     public Evento cadastrarEvento(String nome, String descricao, LocalDate dataInicio, LocalDate dataFim,
             String local, int capacidadeMaxima, String organizadorId,
             LocalDate periodoSubmissaoInicio, LocalDate periodoSubmissaoFim) {
@@ -130,12 +127,13 @@ public class SGEAFacade {
         return eventoController.definirPeriodoSubmissao(eventoId, organizadorIdVerificacao, inicio, fim);
     }
 
+    // UC11: Editar evento
     public Evento atualizarDetalhesEvento(String eventoId, String organizadorIdVerificacao, String nome, String descricao,
             LocalDate dataInicio, LocalDate dataFim, String local, Integer capacidade) {
         return eventoController.atualizarDetalhesEvento(eventoId, organizadorIdVerificacao, nome, descricao, dataInicio, dataFim, local, capacidade);
     }
 
-    // UC5: O organizador gerencia as inscrições de um evento (visualiza, confirma presença de participantes);
+    // UC10: Visualiazar lista de participantes do evento
     public List<Inscricao> visualizarInscritosEvento(String eventoId) {
         return inscricaoController.listarInscricoesPorEvento(eventoId);
     }
@@ -144,15 +142,11 @@ public class SGEAFacade {
         return inscricaoController.confirmarPresenca(inscricaoId, organizadorId);
     }
 
-    // UC6: O organizador designa avaliadores para trabalhos submetidos.
     public Trabalho designarAvaliadorParaTrabalho(String trabalhoId, String avaliadorId, String organizadorId) {
         return trabalhoController.designarAvaliadorParaTrabalho(trabalhoId, avaliadorId, organizadorId);
     }
 
     public List<Trabalho> listarTrabalhosPorAvaliadorDesignado(String avaliadorId) {
-        // Este método ainda precisa de uma implementação mais robusta no TrabalhoController
-        // dependendo de como a designação é modelada.
-        // Por enquanto, pode lançar a exceção ou retornar lista vazia.
         try {
             return trabalhoController.listarTrabalhosPorAvaliadorDesignado(avaliadorId);
         } catch (UnsupportedOperationException e) {
@@ -161,7 +155,6 @@ public class SGEAFacade {
         }
     }
 
-    // UC7: O avaliador registra a avaliação de um trabalho.
     public Avaliacao registrarAvaliacao(String trabalhoId, String avaliadorId, double nota, String parecer) {
         return avaliacaoController.registrarAvaliacao(trabalhoId, avaliadorId, nota, parecer);
     }
@@ -174,7 +167,6 @@ public class SGEAFacade {
         return trabalhoController.atualizarStatusTrabalho(trabalhoId, novoStatus, responsavelId);
     }
 
-    // UC8: O sistema emite certificados de participação e apresentação
     public List<Certificado> emitirCertificadosParticipacaoEvento(String eventoId) {
         return certificadoController.emitirCertificadosParticipacaoEvento(eventoId);
     }

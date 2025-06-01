@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package domain;
 
 import java.time.LocalDate;
@@ -14,12 +10,12 @@ import repository.Identifiable;
  */
 public class Avaliacao implements Identifiable<String> {
      private String id;
-    private double nota; // Pode ser um conceito ou nota numérica
-    private String comentarios; // Parecer
+    private double nota; 
+    private String comentarios;
     private LocalDate dataAvaliacao;
 
-    private Trabalho trabalho; // Trabalho que foi avaliado
-    private Participante avaliador; // Participante que realizou a avaliação
+    private Trabalho trabalho; 
+    private Participante avaliador;
 
     public Avaliacao(double nota, String comentarios, Trabalho trabalho, Participante avaliador) {
         this.id = UUID.randomUUID().toString();
@@ -38,10 +34,6 @@ public class Avaliacao implements Identifiable<String> {
     public LocalDate getDataAvaliacao() { return dataAvaliacao; }
     public Trabalho getTrabalho() { return trabalho; }
     public Participante getAvaliador() { return avaliador; }
-
-    // Setters (geralmente uma avaliação não é editada, mas se necessário)
-    // public void setNota(double nota) { this.nota = nota; }
-    // public void setComentarios(String comentarios) { this.comentarios = comentarios; }
 
     @Override
     public String toString() {

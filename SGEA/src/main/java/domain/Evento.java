@@ -56,7 +56,6 @@ public class Evento implements Identifiable<String> {
     public LocalDate getPeriodoSubmissaoFim() { return periodoSubmissaoFim; }
     public Participante getOrganizadorResponsavel() { return organizadorResponsavel; }
 
-    // Retorna cópias defensivas das listas para proteger o encapsulamento
     public List<Inscricao> getInscricoes() {
         return Collections.unmodifiableList(inscricoes);
     }
@@ -80,14 +79,13 @@ public class Evento implements Identifiable<String> {
         this.periodoSubmissaoFim = fim;
     }
 
-    // --- Métodos de Negócio (Information Expert) ---
     public boolean isLotado() {
         return inscricoes.stream().filter(i -> i.getStatus() == StatusInscricao.ATIVA).count() >= capacidadeMaxima;
     }
 
     public boolean isPeriodoSubmissaoAberto(LocalDate dataAtual) {
         if (periodoSubmissaoInicio == null || periodoSubmissaoFim == null) {
-            return false; // Não configurado para aceitar submissões
+            return false; 
         }
         return !dataAtual.isBefore(periodoSubmissaoInicio) && !dataAtual.isAfter(periodoSubmissaoFim);
     }
@@ -102,21 +100,20 @@ public class Evento implements Identifiable<String> {
         this.inscricoes.add(inscricao);
     }
 
-    public void removerInscricaoInterna(Inscricao inscricao) { // Chamado pelo InscricaoService ao cancelar
+    public void removerInscricaoInterna(Inscricao inscricao) { 
          if (inscricao == null) throw new IllegalArgumentException("Inscrição não pode ser nula.");
-         this.inscricoes.remove(inscricao); // Ou marcar como cancelada, dependendo da lógica de persistência
+         this.inscricoes.remove(inscricao); 
     }
 
-    public void adicionarTrabalhoInterno(Trabalho trabalho) { // Chamado pelo TrabalhoService
+    public void adicionarTrabalhoInterno(Trabalho trabalho) { 
         if (trabalho == null) throw new IllegalArgumentException("Trabalho não pode ser nulo.");
-        // A validação de período de submissão e inscrição do autor é feita no TrabalhoService
         this.trabalhos.add(trabalho);
     }
 
     public List<Inscricao> getInscritosComPresencaConfirmada() {
         return this.inscricoes.stream()
                 .filter(Inscricao::isPresencaConfirmada)
-                .filter(i -> i.getStatus() == StatusInscricao.ATIVA) // Garante que só ativos com presença
+                .filter(i -> i.getStatus() == StatusInscricao.ATIVA)
                 .collect(Collectors.toList());
     }
 

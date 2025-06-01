@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package repository;
 
 import domain.Inscricao;
@@ -40,11 +36,6 @@ public class InscricaoRepository extends BaseRepository<Inscricao, String> {
     
     @Override
     public void deleteById(String id) {
-        // Ao deletar uma inscrição, idealmente você também a removeria da lista de inscrições do Evento.
-        // Esta lógica pode ser complexa para um repositório genérico e pode ser melhor tratada em um Service.
-        // Por simplicidade, a classe base apenas remove do mapa de inscrições.
-        // Se Evento.removerInscricaoInterna for necessário, o service que chama deleteById
-        // precisaria orquestrar isso.
         super.deleteById(id);
     }
 }

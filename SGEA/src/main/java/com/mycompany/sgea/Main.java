@@ -202,7 +202,7 @@ public class Main {
         participanteLogado = null;
     }
 
-    //  UC1: O participante realiza seu cadastro no sistema
+    //  UC2 : Realizar cadastro no sistema
     private static void cadastrarParticipante() {
         System.out.println("\n--- Cadastro de Novo Participante ---");
         String nome = lerString("Nome completo: ");
@@ -254,7 +254,7 @@ public class Main {
         }
     }
 
-    // UC2: O participante visualiza a lista de eventos disponíveis e se inscreve em um evento de seu interesse
+    // UC3: Realizar inscrição no evento
     private static void inscreverEmEvento() {
         System.out.println("\n--- Inscrever-se em Evento ---");
         visualizarEventosDisponiveisPublico();
@@ -267,6 +267,7 @@ public class Main {
         }
     }
 
+    // UC4: Visualizar inscrições de evento
     private static void verMinhasInscricoes() {
         System.out.println("\n--- Minhas Inscrições ---");
         try {
@@ -284,6 +285,7 @@ public class Main {
         }
     }
 
+    // UC5: Cancelar inscrição no evento
     private static void cancelarInscricao() {
         System.out.println("\n--- Cancelar Inscrição ---");
         verMinhasInscricoes();
@@ -296,7 +298,7 @@ public class Main {
         }
     }
 
-    // UC3 - O participante submete um trabalho para um evento no qual está inscrito
+    // UC6: Realizar submissão dos trabalhos
     private static void submeterTrabalho() {
         System.out.println("\n--- Submeter Trabalho ---");
         try {
@@ -323,6 +325,7 @@ public class Main {
         }
     }
 
+    // UC7: Visualizar trabalhos submetidos
     private static void verMeusTrabalhos() {
         System.out.println("\n--- Meus Trabalhos Submetidos ---");
         try {
@@ -337,6 +340,7 @@ public class Main {
         }
     }
 
+    // UC8: Visualizar certificados
     private static void verMeusCertificados() {
         System.out.println("\n--- Meus Certificados ---");
         try {
@@ -357,7 +361,7 @@ public class Main {
     }
 
     // --- Métodos do Organizador ---
-    // UC4 - O organizador cadastra um novo evento no sistema
+    // UC9 - Realizar cadastro de eventos
     private static void cadastrarNovoEvento() {
         System.out.println("\n--- Cadastrar Novo Evento ---");
         String nome = lerString("Nome do Evento: ");
@@ -458,6 +462,7 @@ public class Main {
         }
     }
 
+    // UC12: Designar avaliadores
     private static void designarAvaliador() {
         System.out.println("\n--- Designar Avaliador para Trabalho ---");
         // Listar eventos do organizador
@@ -495,6 +500,7 @@ public class Main {
         }
     }
 
+    // UC15: Emitir Certificados
     private static void emitirCertificadosDoEvento() {
         System.out.println("\n--- Emitir Certificados do Evento ---");
         List<Evento> meusEventos = facade.listarEventosPorOrganizador(participanteLogado.getId());
@@ -522,6 +528,7 @@ public class Main {
     }
 
     // --- Métodos do Avaliador ---
+    // UC13: Visualizar trabalhos a serem avaliados
     private static void listarTrabalhosParaAvaliar() {
         System.out.println("\n--- Trabalhos Designados para Avaliação (Simplificado) ---");
         try {
@@ -543,6 +550,7 @@ public class Main {
         }
     }
 
+    // UC14: Registrar avaliação de um trabalho
     private static void registrarAvaliacao() {
         System.out.println("\n--- Registrar Avaliação de Trabalho ---");
         listarTrabalhosParaAvaliar(); 

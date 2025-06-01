@@ -42,7 +42,7 @@ public class InscricaoController {
 
         Inscricao novaInscricao = new Inscricao(LocalDate.now(), evento, participante);
         evento.adicionarInscricaoInterna(novaInscricao); 
-        // eventoRepository.save(evento); // Se necessário para persistir a mudança na coleção de inscrições do evento
+        eventoRepository.save(evento);
 
         return inscricaoRepository.save(novaInscricao);
     }
@@ -51,14 +51,12 @@ public class InscricaoController {
         Inscricao inscricao = inscricaoRepository.findById(inscricaoId)
                 .orElseThrow(() -> new IllegalArgumentException("Inscrição com ID " + inscricaoId + " não encontrada."));
 
-        // RN 4: Prazo de cancelamento
+        // Regra de Negócio 4: O cancelamento de inscrição só é permitido até X dias antes da data de início do evento (X a ser definido, ex: 2 dias).
         if (!inscricao.podeCancelar(LocalDate.now())) {
             throw new IllegalStateException("Prazo para cancelamento da inscrição expirado ou inscrição não está ativa.");
         }
 
         inscricao.setStatus(StatusInscricao.CANCELADA);
-        // O evento não precisa ser "notificado" diretamente aqui para remover,
-        // pois o status da inscrição já reflete isso. Contagens (isLotado) no Evento usam o status.
         inscricaoRepository.save(inscricao);
     }
 
@@ -71,9 +69,7 @@ public class InscricaoController {
              throw new IllegalStateException("Apenas o organizador responsável pelo evento pode confirmar presenças.");
         }
 
-        // RN 5: Certificados de participação só são emitidos após a data de término do evento e com confirmação de presença.
-        // A confirmação de presença pode ocorrer durante ou logo após o evento.
-        // A regra de emissão do certificado é verificada no CertificadoService.
+        // Regra de Negócio 5: Certificados de participação só são emitidos após a data de término do evento e com confirmação de presença.
         if (LocalDate.now().isBefore(evento.getDataInicio())) {
              throw new IllegalStateException("Ainda não é possível confirmar presença antes do início do evento.");
         }

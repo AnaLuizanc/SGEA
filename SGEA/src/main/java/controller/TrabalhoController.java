@@ -84,12 +84,9 @@ public class TrabalhoController {
     }
 
     public Trabalho atualizarStatusTrabalho(String trabalhoId, StatusTrabalho novoStatus, String responsavelId) {
-        // Responsável pode ser um organizador ou o sistema após avaliações.
         Trabalho trabalho = trabalhoRepository.findById(trabalhoId)
                 .orElseThrow(() -> new IllegalArgumentException("Trabalho com ID " + trabalhoId + " não encontrado."));
 
-        // Adicionar verificação se o responsavelId tem permissão
-        // Ex: se for organizador do evento do trabalho
         trabalho.setStatus(novoStatus);
         return trabalhoRepository.save(trabalho);
     }
@@ -99,9 +96,6 @@ public class TrabalhoController {
     }
 
     public List<Trabalho> listarTrabalhosPorAvaliadorDesignado(String avaliadorId) {
-        // Implementação dependeria de como avaliadores são designados.
-        // Se for via Avaliacao (mesmo antes de preenchida), ou uma lista em Trabalho.
-        // Exemplo simplificado (assumindo que todas as avaliações para um avaliador indicam trabalhos designados):
         // List<Avaliacao> avaliacoesDoAvaliador = avaliacaoRepository.findAllByAvaliadorId(avaliadorId);
         // return avaliacoesDoAvaliador.stream().map(Avaliacao::getTrabalho).distinct().collect(Collectors.toList());
         throw new UnsupportedOperationException("Listar trabalhos por avaliador designado não implementado (requer modelo de designação).");

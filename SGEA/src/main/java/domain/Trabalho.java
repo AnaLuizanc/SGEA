@@ -17,13 +17,13 @@ import repository.Identifiable;
 public class Trabalho  implements Identifiable<String>{
      private String id;
     private String titulo;
-    private String arquivo; // Conteúdo ou caminho do arquivo
+    private String arquivo; 
     private StatusTrabalho status;
     private LocalDate dataSubmissao;
 
-    private Evento evento; // Evento ao qual o trabalho foi submetido
-    private Participante autor; // Lista de participantes autores
-    private List<Avaliacao> avaliacoes; // Lista de avaliações recebidas
+    private Evento evento; 
+    private Participante autor; 
+    private List<Avaliacao> avaliacoes; 
 
     public Trabalho(String titulo, String arquivo, Evento evento, Participante autor) {
         if (autor == null) {
@@ -32,7 +32,7 @@ public class Trabalho  implements Identifiable<String>{
         this.id = UUID.randomUUID().toString();
         this.titulo = titulo;
         this.arquivo = arquivo;
-        this.status = StatusTrabalho.SUBMETIDO; // Status inicial
+        this.status = StatusTrabalho.SUBMETIDO; 
         this.dataSubmissao = LocalDate.now();
         this.evento = evento;
         this.autor = autor;
@@ -56,7 +56,7 @@ public class Trabalho  implements Identifiable<String>{
     public void setStatus(StatusTrabalho status) { this.status = status; }
 
     // --- Métodos de Negócio (Information Expert) ---
-    public void adicionarAvaliacaoInterna(Avaliacao avaliacao) { // Chamado pelo AvaliacaoService
+    public void adicionarAvaliacaoInterna(Avaliacao avaliacao) { 
         if (avaliacao == null) throw new IllegalArgumentException("Avaliação não pode ser nula.");
         if (this.status != StatusTrabalho.SUBMETIDO && this.status != StatusTrabalho.EM_AVALIACAO) {
             throw new IllegalStateException("Trabalho não pode ser avaliado neste status: " + this.status);
@@ -68,8 +68,6 @@ public class Trabalho  implements Identifiable<String>{
     }
 
     public boolean foiAprovado() {
-        // Critério de aprovação pode ser mais complexo (ex: média de notas, decisão de comitê)
-        // Simplificação: Aprovado se o status for APROVADO ou APROVADO_COM_RESSALVAS ou APRESENTADO
         return status == StatusTrabalho.APROVADO ||
                status == StatusTrabalho.APROVADO_COM_RESSALVAS;
     }
