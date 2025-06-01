@@ -56,7 +56,6 @@ public class TrabalhoController {
         Trabalho novoTrabalho = new Trabalho(titulo, arquivo, evento, autor);
         novoTrabalho.setStatus(StatusTrabalho.SUBMETIDO);
         evento.adicionarTrabalhoInterno(novoTrabalho);
-        // eventoRepository.save(evento);
 
         return trabalhoRepository.save(novoTrabalho);
     }
@@ -93,12 +92,6 @@ public class TrabalhoController {
 
     public List<Trabalho> listarTrabalhosPorEvento(String eventoId) {
         return trabalhoRepository.findAllByEventoId(eventoId);
-    }
-
-    public List<Trabalho> listarTrabalhosPorAvaliadorDesignado(String avaliadorId) {
-        // List<Avaliacao> avaliacoesDoAvaliador = avaliacaoRepository.findAllByAvaliadorId(avaliadorId);
-        // return avaliacoesDoAvaliador.stream().map(Avaliacao::getTrabalho).distinct().collect(Collectors.toList());
-        throw new UnsupportedOperationException("Listar trabalhos por avaliador designado não implementado (requer modelo de designação).");
     }
 
     public List<Trabalho> listarTrabalhosPorAutor(String autorId) {

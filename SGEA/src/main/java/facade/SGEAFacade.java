@@ -146,15 +146,6 @@ public class SGEAFacade {
         return trabalhoController.designarAvaliadorParaTrabalho(trabalhoId, avaliadorId, organizadorId);
     }
 
-    public List<Trabalho> listarTrabalhosPorAvaliadorDesignado(String avaliadorId) {
-        try {
-            return trabalhoController.listarTrabalhosPorAvaliadorDesignado(avaliadorId);
-        } catch (UnsupportedOperationException e) {
-            System.err.println("Aviso: " + e.getMessage());
-            return List.of();
-        }
-    }
-
     public Avaliacao registrarAvaliacao(String trabalhoId, String avaliadorId, double nota, String parecer) {
         return avaliacaoController.registrarAvaliacao(trabalhoId, avaliadorId, nota, parecer);
     }
