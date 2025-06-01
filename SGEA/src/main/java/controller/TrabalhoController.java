@@ -17,13 +17,14 @@ import repository.TrabalhoRepository;
  * @author enio1
  */
 public class TrabalhoController {
+
     private final TrabalhoRepository trabalhoRepository;
     private final EventoRepository eventoRepository;
     private final ParticipanteRepository participanteRepository;
-    private final InscricaoRepository inscricaoRepository; // Para verificar inscrição dos autores
+    private final InscricaoRepository inscricaoRepository;
 
     public TrabalhoController(TrabalhoRepository trabalhoRepository, EventoRepository eventoRepository,
-                           ParticipanteRepository participanteRepository, InscricaoRepository inscricaoRepository) {
+            ParticipanteRepository participanteRepository, InscricaoRepository inscricaoRepository) {
         this.trabalhoRepository = trabalhoRepository;
         this.eventoRepository = eventoRepository;
         this.participanteRepository = participanteRepository;
@@ -39,12 +40,12 @@ public class TrabalhoController {
             throw new IllegalStateException("Período de submissão para o evento '" + evento.getNome() + "' está fechado.");
         }
 
-        if (idAutor== null) {
+        if (idAutor == null) {
             throw new IllegalArgumentException("Trabalho deve ter pelo menos um autor.");
         }
 
         Participante autor = participanteRepository.findById(idAutor)
-                        .orElseThrow(() -> new IllegalArgumentException("Autor com ID " + idAutor + " não encontrado."));
+                .orElseThrow(() -> new IllegalArgumentException("Autor com ID " + idAutor + " não encontrado."));
 
         // Regra de Negócio 3: Um participante só pode submeter um trabalho a um evento se estiver inscrito nele.
         boolean autorInscrito = evento.isParticipanteInscritoAtivo(autor);
@@ -53,8 +54,9 @@ public class TrabalhoController {
         }
 
         Trabalho novoTrabalho = new Trabalho(titulo, arquivo, evento, autor);
+        novoTrabalho.setStatus(StatusTrabalho.SUBMETIDO);
         evento.adicionarTrabalhoInterno(novoTrabalho);
-        // eventoRepository.save(evento); // Se necessário
+        // eventoRepository.save(evento);
 
         return trabalhoRepository.save(novoTrabalho);
     }
@@ -65,26 +67,19 @@ public class TrabalhoController {
         Participante avaliador = participanteRepository.findById(avaliadorId)
                 .orElseThrow(() -> new IllegalArgumentException("Avaliador com ID " + avaliadorId + " não encontrado."));
         Participante organizador = participanteRepository.findById(organizadorId)
-                 .orElseThrow(() -> new IllegalArgumentException("Organizador com ID " + organizadorId + " não encontrado."));
+                .orElseThrow(() -> new IllegalArgumentException("Organizador com ID " + organizadorId + " não encontrado."));
 
-        if (organizador.getTipoPerfil() != TipoPerfil.ORGANIZADOR || 
-            !trabalho.getEvento().getOrganizadorResponsavel().getId().equals(organizadorId)) {
+        if (organizador.getTipoPerfil() != TipoPerfil.ORGANIZADOR
+                || !trabalho.getEvento().getOrganizadorResponsavel().getId().equals(organizadorId)) {
             throw new IllegalStateException("Apenas o organizador responsável pelo evento pode designar avaliadores.");
         }
         if (avaliador.getTipoPerfil() != TipoPerfil.AVALIADOR) {
             throw new IllegalStateException("Participante " + avaliador.getNomeCompleto() + " não tem perfil de AVALIADOR.");
         }
-        // Lógica para associar avaliador ao trabalho (pode ser uma lista em Trabalho ou uma entidade de Associação)
-        // Para este exemplo, vamos assumir que a Avaliacao será criada quando o avaliador submeter seu parecer.
-        // Aqui, poderíamos apenas marcar o trabalho como "EM_AVALIACAO" se não estiver, e talvez registrar o avaliador designado.
-        // Por ora, a criação da Avaliacao lida com a ligação.
 
         if (trabalho.getStatus() == StatusTrabalho.SUBMETIDO) {
             trabalho.setStatus(StatusTrabalho.EM_AVALIACAO);
         }
-        // Poderia haver uma lista de `avaliadoresDesignados` em `Trabalho`
-        // Ex: trabalho.adicionarAvaliadorDesignado(avaliador);
-
         return trabalhoRepository.save(trabalho);
     }
 
@@ -92,14 +87,13 @@ public class TrabalhoController {
         // Responsável pode ser um organizador ou o sistema após avaliações.
         Trabalho trabalho = trabalhoRepository.findById(trabalhoId)
                 .orElseThrow(() -> new IllegalArgumentException("Trabalho com ID " + trabalhoId + " não encontrado."));
-        
+
         // Adicionar verificação se o responsavelId tem permissão
         // Ex: se for organizador do evento do trabalho
-
         trabalho.setStatus(novoStatus);
         return trabalhoRepository.save(trabalho);
     }
-    
+
     public List<Trabalho> listarTrabalhosPorEvento(String eventoId) {
         return trabalhoRepository.findAllByEventoId(eventoId);
     }
@@ -112,13 +106,11 @@ public class TrabalhoController {
         // return avaliacoesDoAvaliador.stream().map(Avaliacao::getTrabalho).distinct().collect(Collectors.toList());
         throw new UnsupportedOperationException("Listar trabalhos por avaliador designado não implementado (requer modelo de designação).");
     }
-    
+
     public List<Trabalho> listarTrabalhosPorAutor(String autorId) {
-    if (autorId == null) {
-        throw new IllegalArgumentException("ID do autor não pode ser nulo.");
+        if (autorId == null) {
+            throw new IllegalArgumentException("ID do autor não pode ser nulo.");
+        }
+        return trabalhoRepository.findAllByAutorId(autorId);
     }
-    // Validação se o autor existe pode ser feita aqui se necessário
-    // participanteRepository.findById(autorId).orElseThrow(...);
-    return trabalhoRepository.findAllByAutorId(autorId);
-}
 }

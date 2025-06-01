@@ -1,8 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package controller;
+
 import domain.Avaliacao;
 import domain.Participante;
 import domain.Trabalho;
@@ -12,12 +9,14 @@ import java.util.List;
 import repository.AvaliacaoRepository;
 import repository.ParticipanteRepository;
 import repository.TrabalhoRepository;
+
 /**
  *
  * @author enio1
  */
 public class AvaliacaoController {
-     private final AvaliacaoRepository avaliacaoRepository;
+
+    private final AvaliacaoRepository avaliacaoRepository;
     private final TrabalhoRepository trabalhoRepository;
     private final ParticipanteRepository participanteRepository;
 
@@ -36,24 +35,22 @@ public class AvaliacaoController {
         if (avaliador.getTipoPerfil() != TipoPerfil.AVALIADOR) {
             throw new IllegalStateException("Participante " + avaliador.getNomeCompleto() + " não tem perfil de AVALIADOR.");
         }
-        
-        // Verificar se este avaliador foi designado para este trabalho (lógica a ser implementada se houver designação explícita)
-        // Ex: if (!trabalho.isAvaliadorDesignado(avaliador)) {
-        // throw new IllegalStateException("Avaliador não designado para este trabalho.");
-        // }
 
         if (trabalho.getStatus() != StatusTrabalho.EM_AVALIACAO && trabalho.getStatus() != StatusTrabalho.SUBMETIDO) {
-            // Permitir avaliar SUBMETIDO para mudar para EM_AVALIACAO na primeira avaliação
             throw new IllegalStateException("Trabalho não está aberto para avaliação. Status atual: " + trabalho.getStatus());
         }
 
+        if (nota < 0 && nota > 10) {
+            throw new IllegalStateException("Nota enviada fora do intervalo permitido.");
+        }
+
         Avaliacao novaAvaliacao = new Avaliacao(nota, parecer, trabalho, avaliador);
-        trabalho.adicionarAvaliacaoInterna(novaAvaliacao); // Isso também muda o status do trabalho para EM_AVALIACAO se for a primeira.
-        
-        trabalhoRepository.save(trabalho); // Salva o trabalho com o novo status e a avaliação associada implicitamente
+        trabalho.adicionarAvaliacaoInterna(novaAvaliacao);
+
+        trabalhoRepository.save(trabalho);
         return avaliacaoRepository.save(novaAvaliacao);
     }
-    
+
     public List<Avaliacao> listarAvaliacoesPorTrabalho(String trabalhoId) {
         return avaliacaoRepository.findAllByTrabalhoId(trabalhoId);
     }

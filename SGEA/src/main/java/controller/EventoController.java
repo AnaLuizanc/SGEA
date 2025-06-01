@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package controller;
 
 import domain.Evento;
@@ -66,7 +62,6 @@ public class EventoController {
     }
 
     public List<Evento> listarEventosDisponiveisParaInscricao(LocalDate hoje) {
-        // Delega ao repositório, mas poderia ter lógica adicional aqui
         return eventoRepository.findAllDisponiveisParaInscricao(hoje);
     }
 

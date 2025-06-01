@@ -73,16 +73,15 @@ public class Main {
                 System.out.println("8. Cadastrar Novo Evento");
                 System.out.println("9. Gerenciar Meus Eventos");
                 System.out.println("10. Designar Avaliador para Trabalho");
-                System.out.println("11. Atualizar Status de Trabalho");
-                System.out.println("12. Emitir Certificados do Evento");
+                System.out.println("11. Emitir Certificados do Evento");
             }
             if (participanteLogado.getTipoPerfil() == TipoPerfil.AVALIADOR) {
                 System.out.println("-- Menu Avaliador --");
-                System.out.println("13. Listar Trabalhos para Avaliar");
-                System.out.println("14. Registrar Avaliação de Trabalho");
+                System.out.println("12. Listar Trabalhos para Avaliar");
+                System.out.println("13. Registrar Avaliação de Trabalho");
             }
             System.out.println("-- Sistema --");
-            System.out.println("15. Logout");
+            System.out.println("14. Logout");
             System.out.println("0. Sair do Sistema");
         }
     }
@@ -143,34 +142,27 @@ public class Main {
                 }
             }
             case 11 -> {
-                if (isPerfil(TipoPerfil.ORGANIZADOR)) {
-                    atualizarStatusTrabalho();
-                } else {
-                    opcaoInvalida();
-                }
-            }
-            case 12 -> {
-                if (isPerfil(TipoPerfil.ORGANIZADOR)) {
+                 if (isPerfil(TipoPerfil.ORGANIZADOR)) {
                     emitirCertificadosDoEvento();
                 } else {
                     opcaoInvalida();
                 }
             }
-            case 13 -> {
+            case 12 -> {
                 if (isPerfil(TipoPerfil.AVALIADOR)) {
                     listarTrabalhosParaAvaliar();
                 } else {
                     opcaoInvalida();
                 }
             }
-            case 14 -> {
+            case 13 -> {
                 if (isPerfil(TipoPerfil.AVALIADOR)) {
                     registrarAvaliacao();
                 } else {
                     opcaoInvalida();
                 }
             }
-            case 15 ->
+            case 14 ->
                 logout();
             case 16 -> {
             }
@@ -262,7 +254,7 @@ public class Main {
         }
     }
 
-     // UC2: O participante visualiza a lista de eventos disponíveis e se inscreve em um evento de seu interesse
+    // UC2: O participante visualiza a lista de eventos disponíveis e se inscreve em um evento de seu interesse
     private static void inscreverEmEvento() {
         System.out.println("\n--- Inscrever-se em Evento ---");
         visualizarEventosDisponiveisPublico();
@@ -282,9 +274,9 @@ public class Main {
             if (inscricoes.isEmpty()) {
                 System.out.println("Você não possui inscrições.");
             } else {
-                inscricoes.forEach(i -> System.out.println("ID da inscrição: " + i.getId() 
-                        +  "\nID do evento: " + i.getEvento().getId() 
-                        + " - Evento: " + i.getEvento().getNome() 
+                inscricoes.forEach(i -> System.out.println("ID da inscrição: " + i.getId()
+                        + "\nID do evento: " + i.getEvento().getId()
+                        + " - Evento: " + i.getEvento().getNome()
                         + " \n(Status: " + i.getStatus() + (i.isPresencaConfirmada() ? ", Presença Confirmada" : "") + ")\n"));
             }
         } catch (Exception e) {
@@ -304,6 +296,7 @@ public class Main {
         }
     }
 
+    // UC3 - O participante submete um trabalho para um evento no qual está inscrito
     private static void submeterTrabalho() {
         System.out.println("\n--- Submeter Trabalho ---");
         try {
@@ -364,6 +357,7 @@ public class Main {
     }
 
     // --- Métodos do Organizador ---
+    // UC4 - O organizador cadastra um novo evento no sistema
     private static void cadastrarNovoEvento() {
         System.out.println("\n--- Cadastrar Novo Evento ---");
         String nome = lerString("Nome do Evento: ");
@@ -407,7 +401,6 @@ public class Main {
         System.out.println("1. Visualizar Inscritos");
         System.out.println("2. Confirmar Presença de Participante");
         System.out.println("3. Editar Detalhes do Evento");
-        System.out.println("4. Definir/Alterar Período de Submissão de Trabalhos");
         System.out.println("0. Voltar");
         int escolha = lerInteiro("Sua escolha: ");
 
@@ -423,23 +416,37 @@ public class Main {
                     }
                     break;
                 case 2:
+                    inscricoes = facade.visualizarInscritosEvento(eventoId);
+                    System.out.println("Inscritos no evento '" + eventoSelecionado.getNome() + "':");
+                    if (inscricoes.isEmpty()) {
+                        System.out.println("Nenhum inscrito.");
+                        break;
+                    } else {
+                        inscricoes.forEach(i -> System.out.println(i.getParticipante().getNomeCompleto() + " (ID Inscrição: " + i.getId() + ", Status: " + i.getStatus() + (i.isPresencaConfirmada() ? ", PRESENTE" : "") + ")"));
+                    }
                     String inscricaoId = lerString("ID da Inscrição para confirmar presença: ");
                     facade.confirmarPresenca(inscricaoId, participanteLogado.getId());
                     System.out.println("Presença confirmada.");
                     break;
                 case 3:
-                    System.out.println("Editando detalhes (deixe em branco para não alterar):");
+                    System.out.println("Editando detalhes (enter para não modificar):");
                     String novoNome = lerStringOpcional("Novo Nome (" + eventoSelecionado.getNome() + "): ");
                     String novaDesc = lerStringOpcional("Nova Descrição: ");
-                    // Adicionar mais campos para edição conforme necessário
-                    facade.atualizarDetalhesEvento(eventoId, participanteLogado.getId(), novoNome, novaDesc, null, null, null, null);
-                    System.out.println("Detalhes do evento atualizados.");
-                    break;
-                case 4:
-                    LocalDate subInicio = lerData("Nova Data de Início da Submissão (yyyy-MM-dd): ");
-                    LocalDate subFim = lerData("Nova Data de Fim da Submissão (yyyy-MM-dd): ");
-                    facade.definirPeriodoSubmissaoTrabalhos(eventoId, participanteLogado.getId(), subInicio, subFim);
-                    System.out.println("Período de submissão atualizado.");
+                    LocalDate novaDataInicio = lerDataOpcional("Nova Data de Início (yyyy-MM-dd): ");
+                    LocalDate novaDataFim = lerDataOpcional("Nova Data de Fim (yyyy-MM-dd): ");
+                    String novoLocal = lerStringOpcional("Novo Local: ");
+                    Integer novaCapacidade = lerInteiroOpcional("Nova Capacidade Máxima: ");
+                    LocalDate novoPeriodoSubmissaoInicio = lerDataOpcional("Nova Data de Início da Submissão (yyyy-MM-dd): ");
+                    LocalDate novoPeriodoSubmissaoFim = null;
+                    if (novoPeriodoSubmissaoInicio != null) {
+                        novoPeriodoSubmissaoFim = lerDataOpcional("Nova Data de Fim da Submissão (yyyy-MM-dd): ");
+                    }
+
+                    facade.atualizarDetalhesEvento(eventoId, participanteLogado.getId(), novoNome, novaDesc,
+                            novaDataInicio, novaDataFim, novoLocal, novaCapacidade);
+                    facade.definirPeriodoSubmissaoTrabalhos(eventoId, participanteLogado.getId(),
+                            novoPeriodoSubmissaoInicio, novoPeriodoSubmissaoFim);
+                    System.out.println("Detalhes do evento e período de submissão atualizados.");
                     break;
                 case 0:
                     break;
@@ -488,33 +495,6 @@ public class Main {
         }
     }
 
-    private static void atualizarStatusTrabalho() {
-        System.out.println("\n--- Atualizar Status de Trabalho ---");
-        // Similar a designarAvaliador, listar eventos, depois trabalhos
-        List<Evento> meusEventos = facade.listarEventosPorOrganizador(participanteLogado.getId());
-        if (meusEventos.isEmpty()) {
-            System.out.println("Nenhum evento seu para gerenciar trabalhos.");
-            return;
-        }
-        meusEventos.forEach(e -> System.out.println(e.getId() + " - " + e.getNome()));
-        String eventoId = lerString("ID do Evento do trabalho: ");
-
-        List<Trabalho> trabalhos = facade.listarTrabalhosPorEvento(eventoId);
-        if (trabalhos.isEmpty()) {
-            System.out.println("Nenhum trabalho neste evento.");
-            return;
-        }
-        trabalhos.forEach(t -> System.out.println(t.getId() + " - " + t.getTitulo() + " (Status Atual: " + t.getStatus() + ")"));
-        String trabalhoId = lerString("ID do Trabalho para atualizar status: ");
-        StatusTrabalho novoStatus = lerStatusTrabalho();
-        try {
-            facade.atualizarStatusTrabalho(trabalhoId, novoStatus, participanteLogado.getId());
-            System.out.println("Status do trabalho atualizado para " + novoStatus);
-        } catch (Exception e) {
-            System.err.println("Erro ao atualizar status: " + e.getMessage());
-        }
-    }
-
     private static void emitirCertificadosDoEvento() {
         System.out.println("\n--- Emitir Certificados do Evento ---");
         List<Evento> meusEventos = facade.listarEventosPorOrganizador(participanteLogado.getId());
@@ -544,20 +524,14 @@ public class Main {
     // --- Métodos do Avaliador ---
     private static void listarTrabalhosParaAvaliar() {
         System.out.println("\n--- Trabalhos Designados para Avaliação (Simplificado) ---");
-        // Simplificação: lista trabalhos em avaliação ou que o avaliador já tenha uma avaliação (mesmo que não finalizada)
-        // Uma implementação completa usaria uma lista de designações explícitas.
         try {
-            // Tentar listar todos os trabalhos EM_AVALIACAO como uma aproximação
             List<Trabalho> todosTrabalhos = new ArrayList<>();
             facade.listarTodosEventos().forEach(evento
                     -> todosTrabalhos.addAll(facade.listarTrabalhosPorEvento(evento.getId()))
             );
 
             List<Trabalho> paraAvaliar = todosTrabalhos.stream()
-                    .filter(t -> t.getStatus() == StatusTrabalho.EM_AVALIACAO)
-                    // Adicionar filtro se houver lista de avaliadores designados no trabalho
-                    // .filter(t -> t.getAvaliadoresDesignados().contains(participanteLogado)) 
-                    .collect(Collectors.toList());
+                    .filter(t -> t.getStatus() == StatusTrabalho.EM_AVALIACAO).collect(Collectors.toList());
 
             if (paraAvaliar.isEmpty()) {
                 System.out.println("Nenhum trabalho atualmente designado para você ou em status de avaliação.");
@@ -571,7 +545,7 @@ public class Main {
 
     private static void registrarAvaliacao() {
         System.out.println("\n--- Registrar Avaliação de Trabalho ---");
-        listarTrabalhosParaAvaliar(); // Mostrar trabalhos que podem ser avaliados
+        listarTrabalhosParaAvaliar(); 
         String trabalhoId = lerString("ID do Trabalho a avaliar: ");
         double nota = lerDouble("Nota (0.0 - 10.0): ");
         String parecer = lerString("Parecer/Comentários: ");
@@ -602,6 +576,21 @@ public class Main {
                 return Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
                 System.out.println("Entrada inválida. Por favor, insira um número inteiro.");
+            }
+        }
+    }
+    
+    private static Integer lerInteiroOpcional(String prompt) {
+        while (true) {
+            try {
+                System.out.print(prompt);
+                String input = scanner.nextLine();
+                if (input.trim().isEmpty()) {
+                    return null;
+                }
+                return Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada inválida. Por favor, insira um número inteiro ou deixe em branco.");
             }
         }
     }
@@ -639,7 +628,7 @@ public class Main {
                 return LocalDate.parse(input, DATE_FORMATTER);
             } catch (DateTimeParseException e) {
                 System.out.println("Formato de data inválido. Use yyyy-MM-dd ou deixe em branco.");
-                System.out.print(prompt); // Pergunta novamente
+                System.out.print(prompt);
                 input = scanner.nextLine();
                 if (input.trim().isEmpty()) {
                     return null;
@@ -697,21 +686,21 @@ public class Main {
             Evento evento1 = facade.cadastrarEvento(
                     "Semana Acadêmica de TI",
                     "Palestras e minicursos sobre tecnologia.",
-                    LocalDate.now().plusDays(10),
-                    LocalDate.now().plusDays(12),
+                    LocalDate.now().plusDays(5),
+                    LocalDate.now().plusDays(8),
                     "Auditório Principal IFNMG",
                     5,
                     org.getId(),
-                    LocalDate.now().minusDays(2),
-                    LocalDate.now().plusDays(1)
+                    LocalDate.now().minusDays(1),
+                    LocalDate.now().plusDays(7)
             );
             System.out.println("  Criado Evento: " + evento1.getNome() + " (ID: " + evento1.getId() + ")");
 
             Evento evento2 = facade.cadastrarEvento(
                     "Simpósio de Inovação e Empreendedorismo",
                     "Atividades voltadas para empreendedorismo, startups e inovação.",
-                    LocalDate.now().plusDays(20),
-                    LocalDate.now().plusDays(22),
+                    LocalDate.now().minusDays(2),
+                    LocalDate.now().plusDays(2),
                     "Sala de Conferências IFNMG",
                     8,
                     org.getId(),
@@ -723,13 +712,13 @@ public class Main {
             Evento evento3 = facade.cadastrarEvento(
                     "Workshop de Programação",
                     "Oficinas práticas de linguagens e desenvolvimento de software.",
-                    LocalDate.now().plusDays(30),
-                    LocalDate.now().plusDays(31),
+                    LocalDate.now().minusDays(30),
+                    LocalDate.now().minusDays(21),
                     "Laboratório de Informática IFNMG",
                     6,
                     org.getId(),
-                    LocalDate.now().minusDays(2),
-                    LocalDate.now().plusDays(1)
+                    LocalDate.now().minusDays(25),
+                    LocalDate.now().minusDays(22)
             );
             System.out.println("  Criado Evento: " + evento3.getNome() + " (ID: " + evento3.getId() + ")");
 
@@ -737,6 +726,18 @@ public class Main {
             System.out.println("  " + aluno1.getNomeCompleto() + " inscrito na " + evento1.getNome());
             facade.inscreverEmEvento(aluno2.getId(), evento1.getId());
             System.out.println("  " + aluno2.getNomeCompleto() + " inscrito na " + evento1.getNome());
+
+            try {
+                Trabalho trabalho1 = facade.submeterTrabalho(aluno1.getId(), evento1.getId(), "Introdução à Programação Orientada a Objetos", "poo_iniciantes.pdf");
+                System.out.println("  Trabalho: '" + trabalho1.getTitulo() + "' submetido por " + aluno1.getNomeCompleto() + " no evento '" + evento1.getNome() + "'.");
+                trabalho1.setStatus(StatusTrabalho.EM_AVALIACAO);
+                
+                Trabalho trabalho2 = facade.submeterTrabalho(aluno2.getId(), evento1.getId(), "Desenvolvimento Web com Spring Boot", "spring_web.docx");
+                System.out.println("  Trabalho: '" + trabalho2.getTitulo() + "' submetido por " + aluno2.getNomeCompleto() + " no evento '" + evento1.getNome() + "'.");
+
+            } catch (Exception e) {
+                System.err.println("Erro ao submeter trabalhos iniciais: " + e.getMessage());
+            }
 
         } catch (Exception e) {
             System.err.println("Erro ao semear dados: " + e.getMessage());

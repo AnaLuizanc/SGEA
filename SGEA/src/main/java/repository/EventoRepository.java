@@ -12,8 +12,6 @@ public class EventoRepository extends BaseRepository<Evento, String> {
 
     // Métodos específicos
     public List<Evento> findAllDisponiveisParaInscricao(LocalDate hoje) {
-        // Exemplo: eventos cuja data de início é posterior a hoje
-        // A lógica de "período de inscrição" mais detalhada ficaria no EventoService
         return entities.values().stream()
                 .filter(e -> e.getDataInicio().isAfter(hoje))
                 .collect(Collectors.toList());

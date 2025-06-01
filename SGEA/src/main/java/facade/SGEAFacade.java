@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package facade;
 
 import controller.AvaliacaoController;
@@ -42,7 +38,7 @@ public class SGEAFacade {
     private final AvaliacaoRepository avaliacaoRepository;
     private final CertificadoRepository certificadoRepository;
 
-    // Serviços
+    // Controllers
     private final ParticipanteController participanteController;
     private final EventoController eventoController;
     private final InscricaoController inscricaoController;
@@ -59,7 +55,7 @@ public class SGEAFacade {
         this.avaliacaoRepository = new AvaliacaoRepository();
         this.certificadoRepository = new CertificadoRepository();
 
-        // Inicialização dos Serviços com suas dependências de repositório
+        // Inicialização dos Controllers com suas dependências de repositório
         this.participanteController = new ParticipanteController(participanteRepository);
         this.eventoController = new EventoController(eventoRepository, participanteRepository);
         this.inscricaoController = new InscricaoController(inscricaoRepository, eventoRepository, participanteRepository);
@@ -90,7 +86,7 @@ public class SGEAFacade {
         return eventoController.listarEventosDisponiveisParaInscricao(LocalDate.now());
     }
 
-    public List<Evento> listarTodosEventos() { // Para listagem geral
+    public List<Evento> listarTodosEventos() {
         return eventoController.listarTodosEventos();
     }
 
@@ -98,7 +94,6 @@ public class SGEAFacade {
         return inscricaoController.realizarInscricao(participanteId, eventoId);
     }
 
-    // FR5: Cancelamento de inscrição
     public void cancelarInscricao(String inscricaoId) {
         inscricaoController.cancelarInscricao(inscricaoId);
     }
@@ -117,7 +112,7 @@ public class SGEAFacade {
     }
 
     public Optional<Trabalho> getTrabalhoById(String trabalhoId) {
-        return trabalhoRepository.findById(trabalhoId); // Acesso direto ao repo para simples find
+        return trabalhoRepository.findById(trabalhoId);
     }
 
     // UC4: O organizador cadastra um novo evento no sistema;
@@ -128,10 +123,9 @@ public class SGEAFacade {
     }
 
     public Optional<Evento> getEventoById(String eventoId) {
-        return eventoRepository.findById(eventoId); // Acesso direto ao repo para simples find
+        return eventoRepository.findById(eventoId);
     }
 
-    // FR7: Organizado gerencia eventos (editar informações, visualizar inscritos, definir período de submissão)
     public Evento definirPeriodoSubmissaoTrabalhos(String eventoId, String organizadorIdVerificacao, LocalDate inicio, LocalDate fim) {
         return eventoController.definirPeriodoSubmissao(eventoId, organizadorIdVerificacao, inicio, fim);
     }
@@ -180,28 +174,25 @@ public class SGEAFacade {
         return trabalhoController.atualizarStatusTrabalho(trabalhoId, novoStatus, responsavelId);
     }
 
-    // UC8: O sistema emite certificados de participação e apresentação.
-    // FR10: Emissão de certificados de participação
+    // UC8: O sistema emite certificados de participação e apresentação
     public List<Certificado> emitirCertificadosParticipacaoEvento(String eventoId) {
         return certificadoController.emitirCertificadosParticipacaoEvento(eventoId);
     }
 
-    // FR11: Emissão de certificados de apresentação de trabalho
     public List<Certificado> emitirCertificadosApresentacaoTrabalhoEvento(String eventoId) {
         return certificadoController.emitirCertificadosApresentacaoTrabalhoEvento(eventoId);
     }
 
-    // Certificado para organizador
     public Certificado emitirCertificadoOrganizadorEvento(String eventoId, String organizadorId) {
         return certificadoController.emitirCertificadoOrganizador(eventoId, organizadorId);
     }
 
     public Optional<Certificado> getCertificadoByCodigoValidacao(String codigo) {
-        return certificadoRepository.findByCodigoValidacao(codigo); // Acesso direto
+        return certificadoRepository.findByCodigoValidacao(codigo);
     }
 
     public List<Certificado> listarCertificadosPorParticipante(String participanteId) {
-        return certificadoRepository.findAllByParticipanteId(participanteId); // Acesso direto
+        return certificadoRepository.findAllByParticipanteId(participanteId);
     }
 
     public List<Trabalho> listarTrabalhosPorAutor(String autorId) {

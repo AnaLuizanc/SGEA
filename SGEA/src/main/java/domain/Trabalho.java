@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package domain;
 
 import domain.enums.StatusTrabalho;
@@ -58,18 +54,14 @@ public class Trabalho  implements Identifiable<String>{
     public void setTitulo(String titulo) { this.titulo = titulo; }
     public void setArquivo(String arquivo) { this.arquivo = arquivo; }
     public void setStatus(StatusTrabalho status) { this.status = status; }
-    // Autores e evento geralmente não mudam após criação, mas se necessário:
-    // public void setAutores(List<Participante> autores) { this.autores = new ArrayList<>(autores); }
 
     // --- Métodos de Negócio (Information Expert) ---
     public void adicionarAvaliacaoInterna(Avaliacao avaliacao) { // Chamado pelo AvaliacaoService
         if (avaliacao == null) throw new IllegalArgumentException("Avaliação não pode ser nula.");
-        // RN: Um trabalho só pode ser avaliado se estiver SUBMETIDO ou EM_AVALIACAO
         if (this.status != StatusTrabalho.SUBMETIDO && this.status != StatusTrabalho.EM_AVALIACAO) {
             throw new IllegalStateException("Trabalho não pode ser avaliado neste status: " + this.status);
         }
         this.avaliacoes.add(avaliacao);
-        // Pode-se adicionar lógica para mudar o status do trabalho, ex: para EM_AVALIACAO
         if (this.status == StatusTrabalho.SUBMETIDO) {
             this.status = StatusTrabalho.EM_AVALIACAO;
         }
@@ -79,8 +71,7 @@ public class Trabalho  implements Identifiable<String>{
         // Critério de aprovação pode ser mais complexo (ex: média de notas, decisão de comitê)
         // Simplificação: Aprovado se o status for APROVADO ou APROVADO_COM_RESSALVAS ou APRESENTADO
         return status == StatusTrabalho.APROVADO ||
-               status == StatusTrabalho.APROVADO_COM_RESSALVAS ||
-               status == StatusTrabalho.APRESENTADO;
+               status == StatusTrabalho.APROVADO_COM_RESSALVAS;
     }
 
      public boolean foiApresentado() {
