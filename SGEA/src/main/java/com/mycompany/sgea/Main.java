@@ -53,7 +53,7 @@ public class Main {
         System.out.println("\n===== SGEA - Sistema de Gerenciamento de Eventos Acadêmicos =====");
         if (participanteLogado == null) {
             System.out.println("1. Login");
-            System.out.println("2. Cadastrar Novo Participante");
+            System.out.println("2. Novo usuário");
             System.out.println("3. Visualizar Eventos Disponíveis");
             System.out.println("4. Validar Certificado");
             System.out.println("0. Sair");
@@ -171,10 +171,8 @@ public class Main {
                 }
             }
             case 15 ->
-                validarCertificado();
-            case 16 ->
                 logout();
-            case 17 -> {
+            case 16 -> {
             }
             default ->
                 System.out.println("Opção inválida.");
@@ -284,7 +282,10 @@ public class Main {
             if (inscricoes.isEmpty()) {
                 System.out.println("Você não possui inscrições.");
             } else {
-                inscricoes.forEach(i -> System.out.println(i.getId() + " - Evento: " + i.getEvento().getNome() + " (Status: " + i.getStatus() + (i.isPresencaConfirmada() ? ", Presença Confirmada" : "") + ")"));
+                inscricoes.forEach(i -> System.out.println("ID da inscrição: " + i.getId() 
+                        +  "\nID do evento: " + i.getEvento().getId() 
+                        + " - Evento: " + i.getEvento().getNome() 
+                        + " \n(Status: " + i.getStatus() + (i.isPresencaConfirmada() ? ", Presença Confirmada" : "") + ")\n"));
             }
         } catch (Exception e) {
             System.err.println("Erro ao listar inscrições: " + e.getMessage());
@@ -305,6 +306,16 @@ public class Main {
 
     private static void submeterTrabalho() {
         System.out.println("\n--- Submeter Trabalho ---");
+        try {
+            List<Inscricao> inscricoes = facade.listarInscricoesPorParticipante(participanteLogado.getId());
+            if (inscricoes.isEmpty()) {
+                System.out.println("Você não está inscrito em nenhum evento. Inscreva-se em um evento primeiro para submeter um trabalho.");
+                return;
+            }
+        } catch (Exception e) {
+            System.err.println("Erro ao verificar inscrições: " + e.getMessage());
+            return;
+        }
         verMinhasInscricoes();
         String eventoId = lerString("ID do Evento para submissão: ");
         String titulo = lerString("Título do Trabalho: ");
@@ -689,10 +700,10 @@ public class Main {
                     LocalDate.now().plusDays(10),
                     LocalDate.now().plusDays(12),
                     "Auditório Principal IFNMG",
-                    2,
+                    5,
                     org.getId(),
-                    LocalDate.now().plusDays(1),
-                    LocalDate.now().plusDays(8)
+                    LocalDate.now().minusDays(2),
+                    LocalDate.now().plusDays(1)
             );
             System.out.println("  Criado Evento: " + evento1.getNome() + " (ID: " + evento1.getId() + ")");
 
@@ -702,10 +713,10 @@ public class Main {
                     LocalDate.now().plusDays(20),
                     LocalDate.now().plusDays(22),
                     "Sala de Conferências IFNMG",
-                    80,
+                    8,
                     org.getId(),
-                    LocalDate.now().plusDays(5),
-                    LocalDate.now().plusDays(18)
+                    LocalDate.now().minusDays(2),
+                    LocalDate.now().plusDays(1)
             );
             System.out.println("  Criado Evento: " + evento2.getNome() + " (ID: " + evento2.getId() + ")");
 
@@ -715,10 +726,10 @@ public class Main {
                     LocalDate.now().plusDays(30),
                     LocalDate.now().plusDays(31),
                     "Laboratório de Informática IFNMG",
-                    60,
+                    6,
                     org.getId(),
-                    LocalDate.now().plusDays(10),
-                    LocalDate.now().plusDays(28)
+                    LocalDate.now().minusDays(2),
+                    LocalDate.now().plusDays(1)
             );
             System.out.println("  Criado Evento: " + evento3.getNome() + " (ID: " + evento3.getId() + ")");
 
